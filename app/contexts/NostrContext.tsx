@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useState, useCallback, ReactNode } from 'react';
+import { createContext, useContext, useState, useCallback, ReactNode, useEffect } from 'react';
 import { getPublicKey, nip19, type Event } from 'nostr-tools';
 
 interface NostrContextType {
@@ -13,9 +13,26 @@ interface NostrContextType {
 
 const NostrContext = createContext<NostrContextType | null>(null);
 
+const STORAGE_KEY = 'nostr_auth';
+
 export function NostrProvider({ children }: { children: ReactNode }) {
   const [publicKey, setPublicKey] = useState<string | null>(null);
   const [npub, setNpub] = useState<string | null>(null);
+
+  // Load saved auth state on mount
+  useEffect(() => {
+    const savedAuth = localStorage.getItem(STORAGE_KEY);
+    if (savedAuth) {
+      try {
+        const { publicKey, npub } = JSON.parse(savedAuth);
+        setPublicKey(publicKey);
+        setNpub(npub);
+      } catch (error) {
+        console.error('Error loading saved auth state:', error);
+        localStorage.removeItem(STORAGE_KEY);
+      }
+    }
+  }, []);
 
   const login = useCallback(async () => {
     try {
@@ -26,8 +43,12 @@ export function NostrProvider({ children }: { children: ReactNode }) {
 
       // Request public key from extension
       const pubkey = await window.nostr.getPublicKey();
+      const encodedNpub = nip19.npubEncode(pubkey);
+      
+      // Save auth state
       setPublicKey(pubkey);
-      setNpub(nip19.npubEncode(pubkey));
+      setNpub(encodedNpub);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ publicKey: pubkey, npub: encodedNpub }));
     } catch (error) {
       console.error('Login error:', error);
       throw error;
@@ -37,6 +58,7 @@ export function NostrProvider({ children }: { children: ReactNode }) {
   const logout = useCallback(() => {
     setPublicKey(null);
     setNpub(null);
+    localStorage.removeItem(STORAGE_KEY);
   }, []);
 
   const generateAuthEvent = useCallback(async (url: string, method: string): Promise<Event | null> => {

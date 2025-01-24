@@ -38,41 +38,57 @@ export default function PhoenixInfo() {
   }, []);
 
   if (loading) {
-    return <div className="text-center">Loading Phoenix node info...</div>;
+    return (
+      <div className="bg-gray-800 rounded-lg p-6 animate-pulse">
+        <div className="h-6 bg-gray-700 rounded w-1/4 mb-4"></div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {[...Array(6)].map((_, i) => (
+            <div key={i} className="space-y-2">
+              <div className="h-4 bg-gray-700 rounded w-1/3"></div>
+              <div className="h-4 bg-gray-700 rounded w-1/2"></div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
   }
 
   if (error) {
-    return <div className="text-red-500">Error: {error}</div>;
+    return (
+      <div className="bg-red-900/50 border border-red-800 rounded-lg p-6">
+        <h2 className="text-xl font-semibold text-red-200 mb-2">Error</h2>
+        <p className="text-red-300">{error}</p>
+      </div>
+    );
   }
 
   if (!info) {
-    return <div>No Phoenix node information available</div>;
+    return (
+      <div className="bg-gray-800 border border-gray-700 rounded-lg p-6">
+        <p className="text-gray-400">No Phoenix node information available</p>
+      </div>
+    );
   }
 
+  const stats = [
+    { label: 'Version', value: info.version },
+    { label: 'Network', value: info.chain },
+    { label: 'Block Height', value: info.blocks?.toLocaleString() },
+    { label: 'Connections', value: info.connections },
+    { label: 'Protocol Version', value: info.protocolversion },
+    { label: 'Subversion', value: info.subversion },
+  ];
+
   return (
-    <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
-      <h2 className="text-2xl font-bold mb-4">Phoenix Node Information</h2>
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <p className="font-semibold">Version:</p>
-          <p>{info.version}</p>
-        </div>
-        <div>
-          <p className="font-semibold">Network:</p>
-          <p>{info.chain}</p>
-        </div>
-        <div>
-          <p className="font-semibold">Block Height:</p>
-          <p>{info.blockHeight}</p>
-        </div>
-        <div>
-          <p className="font-semibold">Node ID:</p>
-          <p>{info.nodeId}</p>
-        </div>
-        <div>
-          <p className="font-semibold">Channels:</p>
-          <p>{info.channels.length}</p>
-        </div>
+    <div className="bg-gray-800 border border-gray-700 rounded-lg p-6">
+      <h2 className="text-xl font-semibold text-gray-100 mb-4">Phoenix Node Information</h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {stats.map((stat) => (
+          <div key={stat.label} className="space-y-1">
+            <dt className="text-sm font-medium text-gray-400">{stat.label}</dt>
+            <dd className="text-lg text-gray-100">{stat.value || '-'}</dd>
+          </div>
+        ))}
       </div>
     </div>
   );

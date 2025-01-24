@@ -73,10 +73,9 @@ export default function PhoenixInfo() {
   const stats = [
     { label: 'Version', value: info.version },
     { label: 'Network', value: info.chain },
-    { label: 'Block Height', value: info.blocks?.toLocaleString() },
-    { label: 'Connections', value: info.connections },
-    { label: 'Protocol Version', value: info.protocolversion },
-    { label: 'Subversion', value: info.subversion },
+    { label: 'Block Height', value: info.blockHeight?.toLocaleString() },
+    { label: 'Channels', value: parseInt(info.channels) },
+    { label: 'NodeID', value: info.nodeId },
   ];
 
   return (

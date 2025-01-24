@@ -3,8 +3,7 @@ import type { NextRequest } from 'next/server';
 
 // Add paths that don't require authentication
 const publicPaths = new Set([
-  '/',
-  '/api/phoenix', // Keep API endpoints accessible
+  '/', // Only the home page is public
 ]);
 
 export function middleware(request: NextRequest) {
@@ -32,12 +31,11 @@ export const config = {
   matcher: [
     /*
      * Match all request paths except for the ones starting with:
-     * - api (API routes)
      * - _next/static (static files)
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
      * - public folder
      */
-    '/((?!api|_next/static|_next/image|favicon.ico|public).*)',
+    '/((?!_next/static|_next/image|favicon.ico|public).*)',
   ],
 }; 

@@ -4,16 +4,27 @@ import { useState } from 'react';
 import { Menu, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import NostrLogin from './NostrLogin';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
+  const pathname = usePathname();
 
   const menuItems = [
     { label: 'Dashboard', href: '/' },
+    { label: 'Contacts', href: '/contacts' },
     { label: 'Node Info', href: '/node' },
     { label: 'Settings', href: '/settings' },
     // Add more menu items as needed
   ];
+
+  const isActive = (href: string) => {
+    if (href === '/') {
+      return pathname === href;
+    }
+    return pathname.startsWith(href);
+  };
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-gray-900 border-b border-gray-800">
@@ -21,19 +32,24 @@ export default function Header() {
         <div className="flex items-center justify-between h-16">
           {/* Logo/Title */}
           <div className="flex items-center">
-            <span className="text-xl font-bold text-white">Aurora</span>
+            <Link href="/" className="text-xl font-bold text-white hover:text-purple-400 transition-colors">
+              Aurora
+            </Link>
           </div>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
             {menuItems.map((item) => (
-              <a
+              <Link
                 key={item.href}
                 href={item.href}
-                className="text-gray-300 hover:text-white transition-colors"
+                className={cn(
+                  "text-gray-300 hover:text-white transition-colors",
+                  isActive(item.href) && "text-purple-400 hover:text-purple-300"
+                )}
               >
                 {item.label}
-              </a>
+              </Link>
             ))}
             <NostrLogin />
           </nav>
@@ -57,14 +73,17 @@ export default function Header() {
       >
         <nav className="flex flex-col p-4">
           {menuItems.map((item) => (
-            <a
+            <Link
               key={item.href}
               href={item.href}
-              className="py-2 text-gray-300 hover:text-white transition-colors"
+              className={cn(
+                "py-2 text-gray-300 hover:text-white transition-colors",
+                isActive(item.href) && "text-purple-400 hover:text-purple-300"
+              )}
               onClick={() => setIsOpen(false)}
             >
               {item.label}
-            </a>
+            </Link>
           ))}
           <div className="py-2">
             <NostrLogin />

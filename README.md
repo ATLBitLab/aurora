@@ -1,6 +1,6 @@
 # Aurora
 
-A lightning prism management interface.
+A lightning prism management interface that helps you manage and control payment splits on the Lightning Network. Aurora provides tools for creating, managing, and monitoring lightning payment distributions through prisms.
 
 ## Prerequisites
 

@@ -15,8 +15,6 @@ export default function Header() {
     { label: 'Dashboard', href: '/' },
     { label: 'Contacts', href: '/contacts' },
     { label: 'Node Info', href: '/node' },
-    { label: 'Settings', href: '/settings' },
-    // Add more menu items as needed
   ];
 
   const isActive = (href: string) => {

@@ -17,12 +17,16 @@ export default function NostrLogin() {
     <div className="flex items-center gap-4">
       {publicKey ? (
         <>
-          <span 
-            className="text-sm font-mono text-gray-400 truncate max-w-[140px] hover:max-w-full transition-all duration-300" 
-            title={npub || ''}
-          >
-            {npub}
-          </span>
+          <div className="relative w-[140px] group">
+            <div className="text-sm font-mono text-gray-400 truncate">
+              {npub}
+            </div>
+            <div className="hidden group-hover:block fixed transform -translate-x-1/2 left-1/2 mt-1 px-3 py-1.5 bg-gray-900 border border-gray-800 rounded shadow-lg">
+              <span className="text-sm font-mono text-gray-400">
+                {npub}
+              </span>
+            </div>
+          </div>
           <button
             onClick={logout}
             className="px-3 py-1.5 bg-red-900/50 hover:bg-red-900 text-red-200 text-sm rounded border border-red-800/50 transition-colors"

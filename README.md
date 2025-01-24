@@ -1,6 +1,6 @@
 # Aurora
 
-A Phoenix node management interface with Nostr authentication.
+A lightning prism management interface.
 
 ## Prerequisites
 
@@ -52,6 +52,32 @@ This will:
 npx prisma migrate dev
 ```
 
+### Loading Sample Data
+
+The project includes seed data to help you get started quickly. The seed data includes 5 sample contacts with various fields and metadata:
+
+1. Load the seed data:
+```bash
+npx prisma db seed
+```
+
+This will create sample contacts including:
+- Satoshi Nakamoto (with social media and interests)
+- Alice Lightning (with Nostr integration)
+- Bob Builder (developer profile)
+- Carol Crypto (privacy advocate)
+- Dave Decentralized (web5 developer)
+
+To reset the database and reload seed data:
+```bash
+# Reset the database
+npx prisma migrate reset
+
+# Or manually:
+npx prisma db push --force-reset
+npx prisma db seed
+```
+
 ### Managing the Database
 
 Common database management commands:
@@ -86,6 +112,23 @@ The database currently includes:
   - Nostr integration (pubkey storage)
   - Flexible JSON metadata field for extensibility
   - Optimized indexes for common queries
+
+Example contact structure:
+```typescript
+{
+  id: "uuid",
+  firstName: "Alice",
+  lastName: "Lightning",
+  screenName: "alicezap",
+  nostrPubkey: "npub...",
+  email: "alice@lightning.btc",
+  metadata: {
+    telegram: "@alicezap",
+    interests: ["lightning", "bitcoin"],
+    preferredPaymentMethod: "lightning"
+  }
+}
+```
 
 ## Development
 

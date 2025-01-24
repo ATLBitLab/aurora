@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 
 interface Contact {
   id: string;
@@ -69,9 +70,12 @@ export default function ContactsPage() {
     <div className="container mx-auto px-4 pt-24 pb-8">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold">Contacts</h1>
-        <button className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors">
+        <Link
+          href="/contacts/add"
+          className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors"
+        >
           Add Contact
-        </button>
+        </Link>
       </div>
 
       <div className="grid gap-4">

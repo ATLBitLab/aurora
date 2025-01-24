@@ -2,6 +2,8 @@
 
 import { createContext, useContext, useState, useCallback, ReactNode, useEffect } from 'react';
 import { getPublicKey, nip19, type Event } from 'nostr-tools';
+import { useRouter, useSearchParams } from 'next/navigation';
+import Cookies from 'js-cookie';
 
 interface NostrContextType {
   publicKey: string | null;
@@ -28,6 +30,8 @@ const ACTIVITY_THRESHOLD = 30 * 60 * 1000; // 30 minutes in milliseconds
 export function NostrProvider({ children }: { children: ReactNode }) {
   const [publicKey, setPublicKey] = useState<string | null>(null);
   const [npub, setNpub] = useState<string | null>(null);
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
   const updateAuthTimestamp = useCallback(() => {
     const savedAuth = localStorage.getItem(STORAGE_KEY);
@@ -41,6 +45,7 @@ export function NostrProvider({ children }: { children: ReactNode }) {
       if (now - auth.initialTimestamp > MAX_AUTH_LIFETIME) {
         console.log('Auth has reached maximum lifetime');
         localStorage.removeItem(STORAGE_KEY);
+        Cookies.remove('nostr_auth');
         setPublicKey(null);
         setNpub(null);
         return;
@@ -50,6 +55,8 @@ export function NostrProvider({ children }: { children: ReactNode }) {
       if (now - auth.timestamp > ACTIVITY_THRESHOLD) {
         auth.timestamp = now;
         localStorage.setItem(STORAGE_KEY, JSON.stringify(auth));
+        // Update cookie expiry
+        Cookies.set('nostr_auth', 'true', { expires: 7 }); // 7 days
       }
     } catch (error) {
       console.error('Error updating auth timestamp:', error);
@@ -68,6 +75,7 @@ export function NostrProvider({ children }: { children: ReactNode }) {
         if (now - auth.initialTimestamp > MAX_AUTH_LIFETIME) {
           console.log('Auth has reached maximum lifetime');
           localStorage.removeItem(STORAGE_KEY);
+          Cookies.remove('nostr_auth');
           return;
         }
 
@@ -75,14 +83,18 @@ export function NostrProvider({ children }: { children: ReactNode }) {
         if (now - auth.timestamp > AUTH_TIMEOUT) {
           console.log('Stored auth has expired');
           localStorage.removeItem(STORAGE_KEY);
+          Cookies.remove('nostr_auth');
           return;
         }
 
         setPublicKey(auth.publicKey);
         setNpub(auth.npub);
+        // Ensure cookie is set
+        Cookies.set('nostr_auth', 'true', { expires: 7 }); // 7 days
       } catch (error) {
         console.error('Error loading saved auth state:', error);
         localStorage.removeItem(STORAGE_KEY);
+        Cookies.remove('nostr_auth');
       }
     }
   }, []);
@@ -131,17 +143,26 @@ export function NostrProvider({ children }: { children: ReactNode }) {
       setPublicKey(pubkey);
       setNpub(encodedNpub);
       localStorage.setItem(STORAGE_KEY, JSON.stringify(auth));
+      Cookies.set('nostr_auth', 'true', { expires: 7 }); // 7 days
+
+      // Check for return URL
+      const returnUrl = searchParams.get('returnUrl');
+      if (returnUrl) {
+        router.push(returnUrl);
+      }
     } catch (error) {
       console.error('Login error:', error);
       throw error;
     }
-  }, []);
+  }, [router, searchParams]);
 
   const logout = useCallback(() => {
     setPublicKey(null);
     setNpub(null);
     localStorage.removeItem(STORAGE_KEY);
-  }, []);
+    Cookies.remove('nostr_auth');
+    router.push('/');
+  }, [router]);
 
   const generateAuthEvent = useCallback(async (url: string, method: string): Promise<Event | null> => {
     if (!publicKey || !window.nostr) return null;

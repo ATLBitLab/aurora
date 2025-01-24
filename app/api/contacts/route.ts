@@ -1,20 +1,14 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { PrismaClient } from '@prisma/client';
+import { requireSuperAdmin } from '@/lib/auth';
 
 const prisma = new PrismaClient();
 
 export async function GET(request: NextRequest) {
-  // Check for authentication
-  const authCookie = request.cookies.get('nostr_auth');
-  if (!authCookie) {
-    return NextResponse.json(
-      { error: 'Unauthorized' },
-      { status: 401 }
-    );
-  }
-
   try {
+    await requireSuperAdmin();
+
     const contacts = await prisma.contact.findMany({
       orderBy: [
         { firstName: 'asc' },
@@ -25,7 +19,13 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(contacts);
   } catch (error) {
-    console.error('Error fetching contacts:', error);
+    console.error('Error in GET /api/contacts:', error);
+    if (error instanceof Error && error.message.includes('Unauthorized')) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
     return NextResponse.json(
       { error: 'Failed to fetch contacts' },
       { status: 500 }
@@ -34,16 +34,9 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  // Check for authentication
-  const authCookie = request.cookies.get('nostr_auth');
-  if (!authCookie) {
-    return NextResponse.json(
-      { error: 'Unauthorized' },
-      { status: 401 }
-    );
-  }
-
   try {
+    await requireSuperAdmin();
+
     const data = await request.json();
     
     // Create the contact
@@ -60,7 +53,13 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(contact);
   } catch (error) {
-    console.error('Error creating contact:', error);
+    console.error('Error in POST /api/contacts:', error);
+    if (error instanceof Error && error.message.includes('Unauthorized')) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
     return NextResponse.json(
       { error: 'Failed to create contact' },
       { status: 500 }

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { PrismaClient } from '@prisma/client';
+import { requireSuperAdmin } from '@/lib/auth';
 
 const prisma = new PrismaClient();
 
@@ -10,16 +11,9 @@ export async function GET(
 ) {
   const { id } = await Promise.resolve(context.params);
 
-  // Check for authentication
-  const authCookie = request.cookies.get('nostr_auth');
-  if (!authCookie) {
-    return NextResponse.json(
-      { error: 'Unauthorized' },
-      { status: 401 }
-    );
-  }
-
   try {
+    await requireSuperAdmin();
+
     const contact = await prisma.contact.findUnique({
       where: { id }
     });
@@ -33,7 +27,13 @@ export async function GET(
 
     return NextResponse.json(contact);
   } catch (error) {
-    console.error('Error fetching contact:', error);
+    console.error('Error in GET /api/contacts/[id]:', error);
+    if (error instanceof Error && error.message.includes('Unauthorized')) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
     return NextResponse.json(
       { error: 'Failed to fetch contact' },
       { status: 500 }
@@ -47,16 +47,9 @@ export async function PUT(
 ) {
   const { id } = await Promise.resolve(context.params);
 
-  // Check for authentication
-  const authCookie = request.cookies.get('nostr_auth');
-  if (!authCookie) {
-    return NextResponse.json(
-      { error: 'Unauthorized' },
-      { status: 401 }
-    );
-  }
-
   try {
+    await requireSuperAdmin();
+
     const data = await request.json();
     
     const contact = await prisma.contact.update({
@@ -73,7 +66,13 @@ export async function PUT(
 
     return NextResponse.json(contact);
   } catch (error) {
-    console.error('Error updating contact:', error);
+    console.error('Error in PUT /api/contacts/[id]:', error);
+    if (error instanceof Error && error.message.includes('Unauthorized')) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
     return NextResponse.json(
       { error: 'Failed to update contact' },
       { status: 500 }

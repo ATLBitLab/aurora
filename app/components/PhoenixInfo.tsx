@@ -4,9 +4,11 @@ import { useEffect, useState } from 'react';
 
 interface PhoenixInfo {
   version: string;
-  network: string;
-  blockheight: number;
+  subversion: string;
+  protocolversion: number;
+  blocks: number;
   connections: number;
+  chain: string;
   [key: string]: any;
 }
 
@@ -23,6 +25,7 @@ export default function PhoenixInfo() {
           throw new Error('Failed to fetch Phoenix info');
         }
         const data = await response.json();
+        console.log('Frontend received data:', data);
         setInfo(data);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'An error occurred');
@@ -56,15 +59,19 @@ export default function PhoenixInfo() {
         </div>
         <div>
           <p className="font-semibold">Network:</p>
-          <p>{info.network}</p>
+          <p>{info.chain}</p>
         </div>
         <div>
           <p className="font-semibold">Block Height:</p>
-          <p>{info.blockheight}</p>
+          <p>{info.blockHeight}</p>
         </div>
         <div>
-          <p className="font-semibold">Connections:</p>
-          <p>{info.connections}</p>
+          <p className="font-semibold">Node ID:</p>
+          <p>{info.nodeId}</p>
+        </div>
+        <div>
+          <p className="font-semibold">Channels:</p>
+          <p>{info.channels.length}</p>
         </div>
       </div>
     </div>

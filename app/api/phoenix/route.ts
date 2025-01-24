@@ -23,6 +23,7 @@ export async function GET() {
     }
 
     const data = await response.json();
+    console.log('Phoenix API response:', JSON.stringify(data, null, 2));
     return NextResponse.json(data);
   } catch (error) {
     console.error('Error fetching Phoenix info:', error);

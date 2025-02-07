@@ -2,6 +2,26 @@ import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { requireSuperAdmin } from '@/lib/auth';
 
+export async function GET(request: NextRequest) {
+  try {
+    await requireSuperAdmin();
+
+    const prisms = await prisma.prism.findMany({
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+
+    return NextResponse.json(prisms);
+  } catch (error) {
+    if (error instanceof Error && error.message.includes('Unauthorized')) {
+      return new NextResponse('Unauthorized', { status: 401 });
+    }
+    console.error('Failed to fetch prisms:', error);
+    return new NextResponse('Internal Server Error', { status: 500 });
+  }
+}
+
 export async function POST(request: NextRequest) {
   try {
     await requireSuperAdmin();

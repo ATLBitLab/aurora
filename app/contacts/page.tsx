@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 interface Contact {
   id: string;
@@ -17,25 +18,45 @@ export default function ContactsPage() {
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchContacts = async () => {
       try {
-        const response = await fetch('/api/contacts');
+        const response = await fetch('/api/contacts', {
+          headers: {
+            'Cache-Control': 'no-cache',
+            'Pragma': 'no-cache'
+          }
+        });
+        
         if (!response.ok) {
-          throw new Error('Failed to fetch contacts');
+          const data = await response.json();
+          throw new Error(data.error || 'Failed to fetch contacts');
         }
         const data = await response.json();
         setContacts(data);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'An error occurred');
+        console.error('Error fetching contacts:', err);
+        // Check for specific error types
+        if (err instanceof Error) {
+          if (err.message.includes('Failed to fetch') || err.message.includes('NetworkError')) {
+            setError('Unable to connect to the server. Please check your connection and try again.');
+          } else if (err.message.includes('Unauthorized')) {
+            setError('You are not authorized to view contacts. Please log in and try again.');
+          } else {
+            setError('Sorry, an unexpected error occurred. The database might be unavailable. Please try again later.');
+          }
+        } else {
+          setError('Sorry, an unexpected error occurred. Please try again later.');
+        }
       } finally {
         setLoading(false);
       }
     };
 
     fetchContacts();
-  }, []);
+  }, [router]);
 
   if (loading) {
     return (
@@ -61,6 +82,16 @@ export default function ContactsPage() {
         <div className="bg-red-900/50 border border-red-800 rounded-lg p-6">
           <h2 className="text-xl font-semibold text-red-200 mb-2">Error</h2>
           <p className="text-red-300">{error}</p>
+          <button 
+            onClick={() => {
+              setError(null);
+              setLoading(true);
+              router.refresh();
+            }}
+            className="mt-4 px-4 py-2 bg-red-800 hover:bg-red-700 text-white rounded-lg transition-colors"
+          >
+            Try Again
+          </button>
         </div>
       </div>
     );

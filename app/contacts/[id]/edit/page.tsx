@@ -46,9 +46,15 @@ export default function EditContactPage({
   useEffect(() => {
     const fetchContact = async () => {
       try {
-        const response = await fetch(`/api/contacts/${id}`);
+        const response = await fetch(`/api/contacts/${id}`, {
+          headers: {
+            'Cache-Control': 'no-cache',
+            'Pragma': 'no-cache'
+          }
+        });
         if (!response.ok) {
-          throw new Error('Failed to fetch contact');
+          const data = await response.json();
+          throw new Error(data.error || 'Failed to fetch contact');
         }
         const contact = await response.json();
         
@@ -85,6 +91,8 @@ export default function EditContactPage({
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache'
         },
         body: JSON.stringify({
           ...formData,
@@ -95,7 +103,8 @@ export default function EditContactPage({
       });
 
       if (!response.ok) {
-        throw new Error('Failed to update contact');
+        const data = await response.json();
+        throw new Error(data.error || 'Failed to update contact');
       }
 
       router.push('/contacts');

@@ -1,18 +1,20 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { validateSuperAdmin } from '@/lib/auth';
 
 export async function GET(request: NextRequest) {
-  // Check for authentication
-  const authCookie = request.cookies.get('nostr_auth');
-
-  if (!authCookie) {
-    return NextResponse.json(
-      { error: 'Unauthorized' },
-      { status: 401 }
-    );
-  }
-
   try {
+    // Get the auth cookie and validate super admin
+    const authCookie = request.cookies.get('nostr_auth');
+    const isAuthorized = await validateSuperAdmin(authCookie?.value);
+
+    if (!isAuthorized) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
+
     const phoenixHost = process.env.PHOENIXD_HOST;
     const phoenixPass = process.env.PHOENIXD_HTTP_PASS_LIMITED;
 

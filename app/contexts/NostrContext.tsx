@@ -9,7 +9,7 @@ interface NostrContextType {
   publicKey: string | null;
   npub: string | null;
   login: () => Promise<void>;
-  logout: () => void;
+  logout: () => Promise<void>;
   generateAuthEvent: (url: string, method: string) => Promise<Event | null>;
 }
 
@@ -17,15 +17,11 @@ interface StoredAuth {
   publicKey: string;
   npub: string;
   timestamp: number;
-  initialTimestamp: number;
 }
 
 const NostrContext = createContext<NostrContextType | null>(null);
 
-const STORAGE_KEY = 'nostr_auth';
-const AUTH_TIMEOUT = 48 * 60 * 60 * 1000; // 48 hours in milliseconds
-const MAX_AUTH_LIFETIME = 7 * 24 * 60 * 60 * 1000; // 1 week in milliseconds
-const ACTIVITY_THRESHOLD = 30 * 60 * 1000; // 30 minutes in milliseconds
+const STORAGE_KEY = 'nostr_auth_state';
 
 export function NostrProvider({ children }: { children: ReactNode }) {
   const [publicKey, setPublicKey] = useState<string | null>(null);
@@ -33,94 +29,38 @@ export function NostrProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const updateAuthTimestamp = useCallback(() => {
+  // Load auth state on mount and cookie changes
+  useEffect(() => {
     const savedAuth = localStorage.getItem(STORAGE_KEY);
-    if (!savedAuth) return;
+    const isAuthenticated = Cookies.get('nostr_auth_state') === 'true';
 
+    // If not authenticated, clear state
+    if (!isAuthenticated) {
+      setPublicKey(null);
+      setNpub(null);
+      localStorage.removeItem(STORAGE_KEY);
+      return;
+    }
+
+    // If authenticated but no saved state, clear state
+    if (!savedAuth) {
+      setPublicKey(null);
+      setNpub(null);
+      return;
+    }
+
+    // If authenticated and has saved state, restore it
     try {
       const auth = JSON.parse(savedAuth) as StoredAuth;
-      const now = Date.now();
-      
-      // Check if we've exceeded the maximum lifetime
-      if (now - auth.initialTimestamp > MAX_AUTH_LIFETIME) {
-        console.log('Auth has reached maximum lifetime');
-        localStorage.removeItem(STORAGE_KEY);
-        Cookies.remove('nostr_auth');
-        setPublicKey(null);
-        setNpub(null);
-        return;
-      }
-
-      // Only update if enough time has passed to avoid excessive writes
-      if (now - auth.timestamp > ACTIVITY_THRESHOLD) {
-        auth.timestamp = now;
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(auth));
-        // Update cookie expiry
-        Cookies.set('nostr_auth', 'true', { expires: 7 }); // 7 days
-      }
+      setPublicKey(auth.publicKey);
+      setNpub(auth.npub);
     } catch (error) {
-      console.error('Error updating auth timestamp:', error);
+      console.error('Error parsing saved auth state:', error);
+      setPublicKey(null);
+      setNpub(null);
+      localStorage.removeItem(STORAGE_KEY);
     }
   }, []);
-
-  // Load saved auth state on mount
-  useEffect(() => {
-    const savedAuth = localStorage.getItem(STORAGE_KEY);
-    if (savedAuth) {
-      try {
-        const auth = JSON.parse(savedAuth) as StoredAuth;
-        const now = Date.now();
-        
-        // Check maximum lifetime first
-        if (now - auth.initialTimestamp > MAX_AUTH_LIFETIME) {
-          console.log('Auth has reached maximum lifetime');
-          localStorage.removeItem(STORAGE_KEY);
-          Cookies.remove('nostr_auth');
-          return;
-        }
-
-        // Then check normal timeout
-        if (now - auth.timestamp > AUTH_TIMEOUT) {
-          console.log('Stored auth has expired');
-          localStorage.removeItem(STORAGE_KEY);
-          Cookies.remove('nostr_auth');
-          return;
-        }
-
-        setPublicKey(auth.publicKey);
-        setNpub(auth.npub);
-        // Ensure cookie is set
-        Cookies.set('nostr_auth', 'true', { expires: 7 }); // 7 days
-      } catch (error) {
-        console.error('Error loading saved auth state:', error);
-        localStorage.removeItem(STORAGE_KEY);
-        Cookies.remove('nostr_auth');
-      }
-    }
-  }, []);
-
-  // Set up activity listeners
-  useEffect(() => {
-    if (!publicKey) return;
-
-    const handleActivity = () => {
-      updateAuthTimestamp();
-    };
-
-    // Update timestamp on user activity
-    window.addEventListener('mousemove', handleActivity);
-    window.addEventListener('keydown', handleActivity);
-    window.addEventListener('click', handleActivity);
-    window.addEventListener('scroll', handleActivity);
-
-    // Clean up listeners
-    return () => {
-      window.removeEventListener('mousemove', handleActivity);
-      window.removeEventListener('keydown', handleActivity);
-      window.removeEventListener('click', handleActivity);
-      window.removeEventListener('scroll', handleActivity);
-    };
-  }, [publicKey, updateAuthTimestamp]);
 
   const login = useCallback(async () => {
     try {
@@ -130,20 +70,42 @@ export function NostrProvider({ children }: { children: ReactNode }) {
 
       const pubkey = await window.nostr.getPublicKey();
       const encodedNpub = nip19.npubEncode(pubkey);
-      const now = Date.now();
-      
-      // Save auth state with both timestamps
+
+      console.log('Login - Attempting auth with npub:', encodedNpub);
+
+      // Attempt to authenticate with the server
+      const response = await fetch('/api/auth', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ npub: encodedNpub }),
+      });
+
+      const data = await response.json();
+      console.log('Login - Auth response:', {
+        status: response.status,
+        data
+      });
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Unauthorized: Super Admin access required');
+      }
+
+      // Save auth state
       const auth: StoredAuth = {
         publicKey: pubkey,
         npub: encodedNpub,
-        timestamp: now,
-        initialTimestamp: now,
+        timestamp: Date.now(),
       };
       
       setPublicKey(pubkey);
       setNpub(encodedNpub);
       localStorage.setItem(STORAGE_KEY, JSON.stringify(auth));
-      Cookies.set('nostr_auth', 'true', { expires: 7 }); // 7 days
+
+      // Verify the cookie was set
+      const authCookie = Cookies.get('nostr_auth');
+      console.log('Login - Auth cookie after login:', authCookie);
 
       // Check for return URL
       const returnUrl = searchParams.get('returnUrl');
@@ -152,23 +114,33 @@ export function NostrProvider({ children }: { children: ReactNode }) {
       }
     } catch (error) {
       console.error('Login error:', error);
+      // Clear any existing auth state if login fails
+      setPublicKey(null);
+      setNpub(null);
+      localStorage.removeItem(STORAGE_KEY);
       throw error;
     }
   }, [router, searchParams]);
 
-  const logout = useCallback(() => {
-    setPublicKey(null);
-    setNpub(null);
-    localStorage.removeItem(STORAGE_KEY);
-    Cookies.remove('nostr_auth');
-    router.push('/');
+  const logout = useCallback(async () => {
+    try {
+      // Call logout endpoint to clear cookies
+      await fetch('/api/auth', {
+        method: 'DELETE',
+      });
+    } catch (error) {
+      console.error('Logout error:', error);
+    } finally {
+      // Clear local state regardless of server response
+      setPublicKey(null);
+      setNpub(null);
+      localStorage.removeItem(STORAGE_KEY);
+      router.push('/');
+    }
   }, [router]);
 
   const generateAuthEvent = useCallback(async (url: string, method: string): Promise<Event | null> => {
     if (!publicKey || !window.nostr) return null;
-
-    // Update timestamp on API calls
-    updateAuthTimestamp();
 
     const event: Partial<Event> = {
       kind: 27235,
@@ -188,7 +160,7 @@ export function NostrProvider({ children }: { children: ReactNode }) {
       console.error('Error signing event:', error);
       return null;
     }
-  }, [publicKey, updateAuthTimestamp]);
+  }, [publicKey]);
 
   return (
     <NostrContext.Provider value={{ publicKey, npub, login, logout, generateAuthEvent }}>

@@ -1,13 +1,28 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { PrismaClient } from '@prisma/client';
-import { requireSuperAdmin } from '@/lib/auth';
+import { validateSuperAdmin } from '@/lib/auth';
 
 const prisma = new PrismaClient();
 
 export async function GET(request: NextRequest) {
   try {
-    await requireSuperAdmin();
+    // Get the auth cookie
+    const authCookie = request.cookies.get('nostr_auth');
+    console.log('Auth cookie:', authCookie?.value);
+    console.log('Super admin npub:', process.env.AURORA_SUPER_ADMIN);
+
+    // Validate super admin
+    const isAuthorized = await validateSuperAdmin(authCookie?.value);
+    console.log('Is authorized:', isAuthorized);
+
+    if (!isAuthorized) {
+      console.log('Unauthorized access attempt');
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
 
     const contacts = await prisma.contact.findMany({
       orderBy: [
@@ -20,12 +35,6 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(contacts);
   } catch (error) {
     console.error('Error in GET /api/contacts:', error);
-    if (error instanceof Error && error.message.includes('Unauthorized')) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
     return NextResponse.json(
       { error: 'Failed to fetch contacts' },
       { status: 500 }
@@ -35,7 +44,21 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    await requireSuperAdmin();
+    // Get the auth cookie
+    const authCookie = request.cookies.get('nostr_auth');
+    console.log('Auth cookie:', authCookie?.value);
+    
+    // Validate super admin
+    const isAuthorized = await validateSuperAdmin(authCookie?.value);
+    console.log('Is authorized:', isAuthorized);
+
+    if (!isAuthorized) {
+      console.log('Unauthorized access attempt');
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
 
     const data = await request.json();
     
@@ -54,12 +77,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(contact);
   } catch (error) {
     console.error('Error in POST /api/contacts:', error);
-    if (error instanceof Error && error.message.includes('Unauthorized')) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
     return NextResponse.json(
       { error: 'Failed to create contact' },
       { status: 500 }

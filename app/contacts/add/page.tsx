@@ -46,6 +46,8 @@ export default function AddContactPage() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache'
         },
         body: JSON.stringify({
           ...formData,
@@ -56,7 +58,8 @@ export default function AddContactPage() {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to create contact');
+        const data = await response.json();
+        throw new Error(data.error || 'Failed to create contact');
       }
 
       router.push('/contacts');

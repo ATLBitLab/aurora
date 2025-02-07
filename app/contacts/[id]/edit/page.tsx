@@ -112,6 +112,7 @@ export default function EditContactPage({
       isLoading={saving}
       error={error}
       title="Edit Contact"
+      contactId={id}
     />
   ) : null;
 } 

@@ -28,6 +28,9 @@ model Contact {
   // Flexible storage for additional fields
   metadata Json?
 
+  // Relations
+  paymentDestinations PaymentDestination[]
+
   // Indexes for common search patterns
   @@index([firstName])
   @@index([lastName])
@@ -35,4 +38,21 @@ model Contact {
   
   // Full name search index
   @@index([firstName, lastName])
+}
+
+model PaymentDestination {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  value String
+  type  String
+
+  // Relations
+  contact   Contact @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  contactId String
+
+  // Indexes
+  @@unique([contactId, value]) // Prevent duplicate values for the same contact
+  @@index([type])
 }

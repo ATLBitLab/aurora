@@ -13,6 +13,7 @@ export default function Header() {
 
   const menuItems = [
     { label: 'Dashboard', href: '/' },
+    { label: 'Prisms', href: '/prisms' },
     { label: 'Contacts', href: '/contacts' },
     { label: 'Node Info', href: '/node' },
   ];

@@ -104,7 +104,7 @@ export default function PrismsPage() {
                       </span>
                     )}
                     <Link
-                      href={`/prisms/${prism.slug}`}
+                      href={`/prisms/${prism.id}`}
                       className="text-purple-400 hover:text-purple-300 transition-colors"
                     >
                       View Details →

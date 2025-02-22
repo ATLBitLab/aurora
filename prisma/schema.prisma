@@ -1,0 +1,96 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Contact {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Commonly searched fields as columns
+  firstName   String?
+  lastName    String?
+  screenName  String?
+  nostrPubkey String?  @unique // Store the raw pubkey
+  email       String?  @unique
+
+  // Flexible storage for additional fields
+  metadata Json?
+
+  // Relations
+  paymentDestinations PaymentDestination[]
+
+  // Indexes for common search patterns
+  @@index([firstName])
+  @@index([lastName])
+  @@index([screenName])
+  
+  // Full name search index
+  @@index([firstName, lastName])
+}
+
+model PaymentDestination {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  value String
+  type  String
+
+  // Relations
+  contact   Contact @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  contactId String
+  splits    Split[]
+
+  // Indexes
+  @@unique([contactId, value]) // Prevent duplicate values for the same contact
+  @@index([type])
+}
+
+model Prism {
+  id          String   @id @default(uuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  active      Boolean  @default(true)
+  name        String
+  slug        String   @unique
+  description String?
+
+  // Relations
+  splits Split[]
+
+  // Indexes
+  @@index([active])
+}
+
+model Split {
+  id          String   @id @default(uuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  description String?
+  
+  // The split percentage stored as a decimal between 0 and 1
+  // Using Decimal for precise decimal arithmetic
+  percentage Decimal @db.Decimal(5, 4) // Allows storing up to 1.0000
+
+  // Relations
+  prism              Prism              @relation(fields: [prismId], references: [id], onDelete: Cascade)
+  prismId            String
+  paymentDestination PaymentDestination @relation(fields: [destinationId], references: [id], onDelete: Restrict)
+  destinationId      String
+
+  // Constraints
+  @@unique([prismId, destinationId]) // Each destination can only be used once per prism
+  @@index([prismId]) // For faster lookups of splits by prism
+}

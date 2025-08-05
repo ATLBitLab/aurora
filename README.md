@@ -2,12 +2,15 @@
 
 A lightning prism management interface that helps you manage and control payment splits on the Lightning Network. Aurora provides tools for creating, managing, and monitoring lightning payment distributions through prisms.
 
+![Aurora Dashboard](public/aurora-poster.jpg)
+
 ## WIP - deep alpha yall - do not use (yet)
 
 This is a work in progress. Things are rapidly being built and changed on various branches. Design and UX planning is happening in these docs:
 
 - [Deeksha's Aurora User Journeys](https://www.figma.com/board/DN6CM2jcfiJiANeT2hw55C/Aurora-User-Journeys?node-id=0-1&t=9kwHem1iznqMuHVH-1)
 - [Deeksha's Wireframes](https://www.figma.com/design/YzJPVZ8VHcm3BWcqvdwGaH/Prism-project?node-id=0-1&t=dRecM7IKxuVvOujL-1)
+- [Deeksha's UI Designs and Prototype](https://www.figma.com/design/eTUcSLVwAKhRIQxMqBqo8v/Aurora---Prism-Project?node-id=2335-4864&t=OYX3l2yehRQtYU6o-1)
 
 ## Prerequisites
 

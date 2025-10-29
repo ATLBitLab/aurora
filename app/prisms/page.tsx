@@ -61,12 +61,13 @@ export default function PrismsPage() {
       <div className="max-w-4xl mx-auto">
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-3xl font-bold">Prisms</h1>
-          <Link
-            href="/prisms/new"
-            className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors"
-          >
-            Create New Prism
-          </Link>
+          <Link href="/prisms/new">
+          <div className="inline-flex rounded-full p-[2px] bg-gradient-to-r from-emerald-400 to-emerald-700">
+        <div className="rounded-full bg-gradient-to-t from-black to-gray-800 px-6 py-2 text-white text-l font-medium tracking-tight shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
+        Create New Prism
+        </div>
+        </div>
+          </Link>
         </div>
 
         {error && (

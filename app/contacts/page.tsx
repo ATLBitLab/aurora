@@ -102,12 +102,11 @@ export default function ContactsPage() {
     <div className="container mx-auto px-4 pt-24 pb-8">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold">Contacts</h1>
-        <Link
-          href="/contacts/add"
-          className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors"
-        >
-          Add Contact
-        </Link>
+        <Button
+          onClick={() => router.push('/contacts/add')}
+          text="Add Contact"
+          style="Primary"
+        />
       </div>
 
       <div className="grid gap-4">

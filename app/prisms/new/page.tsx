@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { XMarkIcon } from '@heroicons/react/24/outline';
+import Button from '@/app/components/Button';
 
 interface PaymentDestination {
   id: string;
@@ -188,12 +189,11 @@ export default function NewPrismPage() {
       <div className="max-w-2xl mx-auto">
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-3xl font-bold">Create New Prism</h1>
-          <button
+          <Button
             onClick={() => router.back()}
-            className="px-4 py-2 text-gray-400 hover:text-white transition-colors"
-          >
-            Cancel
-          </button>
+            text="Cancel"
+            style="Secondary"
+          />
         </div>
 
         {error && (
@@ -252,13 +252,12 @@ export default function NewPrismPage() {
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <h2 className="text-xl font-semibold">Payment Splits</h2>
-              <button
+              <Button
                 type="button"
                 onClick={handleAddSplit}
-                className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors"
-              >
-                Add Split
-              </button>
+                text="Add Split"
+                style="Primary"
+              />
             </div>
 
             <div className="space-y-4">
@@ -328,29 +327,30 @@ export default function NewPrismPage() {
                     </div>
                   </div>
 
-                  <button
+                  <Button
                     type="button"
                     onClick={() => handleRemoveSplit(index)}
-                    className="text-gray-400 hover:text-red-400 transition-colors mt-8"
-                  >
-                    <XMarkIcon className="h-5 w-5" />
-                  </button>
+                    showIcon
+                    icon={<XMarkIcon className="h-5 w-5" />}
+                    text=""
+                    style="Secondary"
+                    className="mt-8"
+                  />
                 </div>
               ))}
             </div>
           </div>
 
           <div className="flex justify-end">
-            <button
+            <Button
               type="submit"
               disabled={loading}
-              className="px-6 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {loading ? 'Creating...' : 'Create Prism'}
-            </button>
+              text={loading ? 'Creating...' : 'Create Prism'}
+              style="Primary"
+            />
           </div>
         </form>
       </div>
     </div>
   );
-} 
+}

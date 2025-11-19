@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Button from '@/app/components/Button';
 
 interface Prism {
   id: string;
@@ -61,12 +62,11 @@ export default function PrismsPage() {
       <div className="max-w-4xl mx-auto">
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-3xl font-bold">Prisms</h1>
-          <Link
-            href="/prisms/new"
-            className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors"
-          >
-            Create New Prism
-          </Link>
+          <Button
+            onClick={() => router.push('/prisms/new')}
+            text="Create New Prism"
+            style="Primary"
+          />
         </div>
 
         {error && (

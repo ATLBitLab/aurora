@@ -1,6 +1,7 @@
 'use client';
 
 import { useNostr } from '../contexts/NostrContext';
+import Button from '@/app/components/Button';
 
 export default function NostrLogin() {
   const { publicKey, npub, login, logout } = useNostr();
@@ -27,21 +28,21 @@ export default function NostrLogin() {
               </span>
             </div>
           </div>
-          <button
+          <Button
             onClick={logout}
-            className="px-3 py-1.5 bg-red-900/50 hover:bg-red-900 text-red-200 text-sm rounded border border-red-800/50 transition-colors"
-          >
-            Logout
-          </button>
+            text="Logout"
+            style="Secondary"
+            className="text-red-200 border-red-800/50"
+          />
         </>
       ) : (
-        <button
+        <Button
           onClick={handleLogin}
-          className="px-3 py-1.5 bg-purple-900/50 hover:bg-purple-900 text-purple-200 text-sm rounded border border-purple-800/50 transition-colors"
-        >
-          Login with Nostr
-        </button>
+          text="Login with Nostr"
+          style="Primary"
+          className="text-purple-200"
+        />
       )}
     </div>
   );
-} 
+}

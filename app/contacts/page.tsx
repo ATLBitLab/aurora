@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import Button from '@/app/components/Button';
 
 interface Contact {
   id: string;
@@ -82,16 +83,16 @@ export default function ContactsPage() {
         <div className="bg-red-900/50 border border-red-800 rounded-lg p-6">
           <h2 className="text-xl font-semibold text-red-200 mb-2">Error</h2>
           <p className="text-red-300">{error}</p>
-          <button 
+          <Button 
             onClick={() => {
               setError(null);
               setLoading(true);
               router.refresh();
             }}
-            className="mt-4 px-4 py-2 bg-red-800 hover:bg-red-700 text-white rounded-lg transition-colors"
-          >
-            Try Again
-          </button>
+            text="Try Again"
+            style="Secondary"
+            className="mt-4"
+          />
         </div>
       </div>
     );
@@ -101,12 +102,11 @@ export default function ContactsPage() {
     <div className="container mx-auto px-4 pt-24 pb-8">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold">Contacts</h1>
-        <Link
-          href="/contacts/add"
-          className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors"
-        >
-          Add Contact
-        </Link>
+        <Button
+          onClick={() => router.push('/contacts/add')}
+          text="Add Contact"
+          style="Primary"
+        />
       </div>
 
       <div className="grid gap-4">

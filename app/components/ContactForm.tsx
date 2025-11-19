@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { XMarkIcon } from '@heroicons/react/24/outline';
+import Button from '@/app/components/Button';
 
 export interface PaymentDestination {
   id: string;
@@ -157,12 +158,11 @@ export default function ContactForm({
       <div className="max-w-2xl mx-auto">
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-3xl font-bold">{title}</h1>
-          <button
+          <Button
             onClick={() => router.back()}
-            className="px-4 py-2 text-gray-400 hover:text-white transition-colors"
-          >
-            Cancel
-          </button>
+            text="Cancel"
+            style="Secondary"
+          />
         </div>
 
         {error && (
@@ -331,13 +331,12 @@ export default function ContactForm({
                     <option value="lightning-address">Lightning Address</option>
                   </select>
                 </div>
-                <button
+                <Button
                   type="button"
                   onClick={handleAddDestination}
-                  className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors"
-                >
-                  Add
-                </button>
+                  text="Add"
+                  style="Primary"
+                />
               </div>
 
               {destinationError && (
@@ -355,13 +354,14 @@ export default function ContactForm({
                       <p className="text-white font-mono">{dest.value}</p>
                       <p className="text-gray-400 text-sm">{dest.type}</p>
                     </div>
-                    <button
+                    <Button
                       type="button"
                       onClick={() => handleDeleteDestination(dest.id)}
-                      className="text-gray-400 hover:text-red-400 transition-colors"
-                    >
-                      <XMarkIcon className="h-5 w-5" />
-                    </button>
+                      showIcon
+                      icon={<XMarkIcon className="h-5 w-5" />}
+                      text=""
+                      style="Secondary"
+                    />
                   </div>
                 ))}
               </div>
@@ -369,16 +369,15 @@ export default function ContactForm({
           )}
 
           <div className="flex justify-end">
-            <button
+            <Button
               type="submit"
               disabled={isLoading}
-              className="px-6 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isLoading ? 'Saving...' : 'Save Contact'}
-            </button>
+              text={isLoading ? 'Saving...' : 'Save Contact'}
+              style="Primary"
+            />
           </div>
         </form>
       </div>
     </div>
   );
-} 
+}

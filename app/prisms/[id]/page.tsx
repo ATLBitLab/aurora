@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { use } from 'react';
 import PrismForm, { PrismFormData } from '@/app/components/PrismForm';
+import Button from '@/app/components/Button';
 
 interface Split {
   id: string;
@@ -116,12 +117,12 @@ export default function PrismPage({
             <p className="text-gray-400 mt-2">
               The prism you're looking for doesn't exist or you don't have permission to view it.
             </p>
-            <button
+            <Button
               onClick={() => router.push('/prisms')}
-              className="mt-4 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors"
-            >
-              Back to Prisms
-            </button>
+              text="Back to Prisms"
+              style="Primary"
+              className="mt-4"
+            />
           </div>
         </div>
       </div>

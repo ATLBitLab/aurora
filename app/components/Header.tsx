@@ -6,6 +6,7 @@ import { cn } from '@/lib/utils';
 import NostrLogin from './NostrLogin';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import Button from '@/app/components/Button';
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
@@ -54,12 +55,16 @@ export default function Header() {
           </nav>
 
           {/* Mobile Menu Button */}
-          <button
-            onClick={() => setIsOpen(!isOpen)}
-            className="md:hidden p-2 text-gray-400 hover:text-white focus:outline-none"
-          >
-            {isOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
+          <div className="md:hidden">
+            <Button
+              onClick={() => setIsOpen(!isOpen)}
+              showIcon
+              icon={isOpen ? <X size={20} /> : <Menu size={20} />}
+              text=""
+              style="Secondary"
+              className="p-2"
+            />
+          </div>
         </div>
       </div>
 

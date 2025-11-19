@@ -1,6 +1,7 @@
 'use client';
 
 import { useNostr } from "./contexts/NostrContext";
+import Button from "./components/Button";
 
 export default function Home() {
   const { publicKey, login } = useNostr();
@@ -50,12 +51,12 @@ export default function Home() {
               <p className="text-xl text-gray-300 mb-12">
                 Your gateway to lightning prisms. Connect with Nostr to begin.
               </p>
-              <button
+              <Button
                 onClick={handleLogin}
-                className="px-8 py-4 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white text-lg font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
-              >
-                Connect with Nostr
-              </button>
+                text="Connect with Nostr"
+                style="Primary"
+                showIcon={false}
+              />
             </div>
           </div>
         </div>

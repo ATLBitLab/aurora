@@ -5,14 +5,15 @@ import { Prisma } from '@prisma/client';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await requireSuperAdmin();
+    const { id } = await params;
 
     const destinations = await prisma.paymentDestination.findMany({
       where: {
-        contactId: params.id,
+        contactId: id,
       },
       orderBy: {
         createdAt: 'desc',
@@ -31,10 +32,11 @@ export async function GET(
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await requireSuperAdmin();
+    const { id } = await params;
 
     const body = await request.json();
     const { value, type } = body;
@@ -45,7 +47,7 @@ export async function POST(
 
     // Check if contact exists
     const contact = await prisma.contact.findUnique({
-      where: { id: params.id },
+      where: { id },
     });
 
     if (!contact) {
@@ -57,7 +59,7 @@ export async function POST(
       data: {
         value,
         type,
-        contactId: params.id,
+        contactId: id,
       },
     });
 
@@ -78,10 +80,11 @@ export async function POST(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await requireSuperAdmin();
+    const { id } = await params;
 
     const url = new URL(request.url);
     const destinationId = url.searchParams.get('destinationId');
@@ -94,7 +97,7 @@ export async function DELETE(
     await prisma.paymentDestination.delete({
       where: {
         id: destinationId,
-        contactId: params.id,
+        contactId: id,
       },
     });
 

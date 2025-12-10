@@ -5,13 +5,14 @@ import { Prisma } from '@prisma/client';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await requireSuperAdmin();
+    const { id } = await params;
 
     const prism = await prisma.prism.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: {
         splits: {
           include: {
@@ -53,10 +54,11 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await requireSuperAdmin();
+    const { id } = await params;
 
     const body = await request.json();
     const { name, slug, description, active, splits } = body;
@@ -85,7 +87,7 @@ export async function PUT(
 
     // First, check if the prism exists
     const existingPrism = await prisma.prism.findUnique({
-      where: { id: params.id },
+      where: { id },
     });
 
     if (!existingPrism) {
@@ -96,7 +98,7 @@ export async function PUT(
     await prisma.$transaction([
       // Update the prism
       prisma.prism.update({
-        where: { id: params.id },
+        where: { id },
         data: {
           name,
           slug,
@@ -106,7 +108,7 @@ export async function PUT(
       }),
       // Delete existing splits
       prisma.split.deleteMany({
-        where: { prismId: params.id },
+        where: { prismId: id },
       }),
       // Create new splits
       prisma.split.createMany({
@@ -115,7 +117,7 @@ export async function PUT(
           percentage: string | number;
           description?: string;
         }) => ({
-          prismId: params.id,
+          prismId: id,
           destinationId: split.destinationId,
           percentage: Number(split.percentage),
           description: split.description,
@@ -125,7 +127,7 @@ export async function PUT(
 
     // Fetch the updated prism with all its relations
     const updatedPrism = await prisma.prism.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: {
         splits: {
           include: {
@@ -181,13 +183,14 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await requireSuperAdmin();
+    const { id } = await params;
 
     const prism = await prisma.prism.delete({
-      where: { id: params.id },
+      where: { id },
     });
 
     return NextResponse.json(prism);

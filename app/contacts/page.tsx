@@ -12,7 +12,10 @@ interface Contact {
   screenName: string | null;
   email: string | null;
   nostrPubkey: string | null;
-  metadata: any;
+  metadata: {
+    bio?: string;
+    [key: string]: unknown;
+  } | null;
 }
 
 export default function ContactsPage() {

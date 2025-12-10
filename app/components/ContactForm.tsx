@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import Button from '@/app/components/Button';
@@ -60,13 +60,8 @@ export default function ContactForm({
   const [newDestination, setNewDestination] = useState({ value: '', type: 'offer' });
   const [destinationError, setDestinationError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (contactId) {
-      fetchPaymentDestinations();
-    }
-  }, [contactId]);
-
-  const fetchPaymentDestinations = async () => {
+  const fetchPaymentDestinations = useCallback(async () => {
+    if (!contactId) return;
     try {
       const response = await fetch(`/api/contacts/${contactId}/payment-destinations`);
       if (!response.ok) {
@@ -77,7 +72,13 @@ export default function ContactForm({
     } catch (err) {
       console.error('Error fetching payment destinations:', err);
     }
-  };
+  }, [contactId]);
+
+  useEffect(() => {
+    if (contactId) {
+      fetchPaymentDestinations();
+    }
+  }, [contactId, fetchPaymentDestinations]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

@@ -1,8 +1,8 @@
 'use client';
 
 import { createContext, useContext, useState, useCallback, ReactNode, useEffect } from 'react';
-import { getPublicKey, nip19, type Event } from 'nostr-tools';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { nip19, type Event } from 'nostr-tools';
+import { useRouter } from 'next/navigation';
 import Cookies from 'js-cookie';
 
 interface NostrContextType {
@@ -27,7 +27,6 @@ export function NostrProvider({ children }: { children: ReactNode }) {
   const [publicKey, setPublicKey] = useState<string | null>(null);
   const [npub, setNpub] = useState<string | null>(null);
   const router = useRouter();
-  const searchParams = useSearchParams();
 
   // Load auth state on mount and cookie changes
   useEffect(() => {
@@ -107,10 +106,13 @@ export function NostrProvider({ children }: { children: ReactNode }) {
       const authCookie = Cookies.get('nostr_auth');
       console.log('Login - Auth cookie after login:', authCookie);
 
-      // Check for return URL
-      const returnUrl = searchParams.get('returnUrl');
-      if (returnUrl) {
-        router.push(returnUrl);
+      // Check for return URL from window location (client-side only)
+      if (typeof window !== 'undefined') {
+        const urlParams = new URLSearchParams(window.location.search);
+        const returnUrl = urlParams.get('returnUrl');
+        if (returnUrl) {
+          router.push(returnUrl);
+        }
       }
     } catch (error) {
       console.error('Login error:', error);
@@ -120,7 +122,7 @@ export function NostrProvider({ children }: { children: ReactNode }) {
       localStorage.removeItem(STORAGE_KEY);
       throw error;
     }
-  }, [router, searchParams]);
+  }, [router]);
 
   const logout = useCallback(async () => {
     try {

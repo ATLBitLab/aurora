@@ -9,7 +9,10 @@ interface PhoenixInfo {
   blocks: number;
   connections: number;
   chain: string;
-  [key: string]: any;
+  blockHeight?: number;
+  channels?: string;
+  nodeId?: string;
+  [key: string]: string | number | undefined;
 }
 
 export default function PhoenixInfo() {
@@ -74,7 +77,7 @@ export default function PhoenixInfo() {
     { label: 'Version', value: info.version },
     { label: 'Network', value: info.chain },
     { label: 'Block Height', value: info.blockHeight?.toLocaleString() },
-    { label: 'Channels', value: parseInt(info.channels) },
+    { label: 'Channels', value: info.channels ? parseInt(info.channels) : undefined },
     { label: 'NodeID', value: info.nodeId },
   ];
 

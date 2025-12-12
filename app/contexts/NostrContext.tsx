@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useState, useCallback, ReactNode, useEffect } from 'react';
+import { createContext, useContext, useState, useCallback, ReactNode, useEffect, Suspense } from 'react';
 import { getPublicKey, nip19, type Event } from 'nostr-tools';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Cookies from 'js-cookie';
@@ -23,7 +23,7 @@ const NostrContext = createContext<NostrContextType | null>(null);
 
 const STORAGE_KEY = 'nostr_auth_state';
 
-export function NostrProvider({ children }: { children: ReactNode }) {
+function NostrProviderInner({ children }: { children: ReactNode }) {
   const [publicKey, setPublicKey] = useState<string | null>(null);
   const [npub, setNpub] = useState<string | null>(null);
   const router = useRouter();
@@ -166,6 +166,24 @@ export function NostrProvider({ children }: { children: ReactNode }) {
     <NostrContext.Provider value={{ publicKey, npub, login, logout, generateAuthEvent }}>
       {children}
     </NostrContext.Provider>
+  );
+}
+
+export function NostrProvider({ children }: { children: ReactNode }) {
+  return (
+    <Suspense fallback={
+      <NostrContext.Provider value={{ 
+        publicKey: null, 
+        npub: null, 
+        login: async () => {}, 
+        logout: async () => {}, 
+        generateAuthEvent: async () => null 
+      }}>
+        {children}
+      </NostrContext.Provider>
+    }>
+      <NostrProviderInner>{children}</NostrProviderInner>
+    </Suspense>
   );
 }
 

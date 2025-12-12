@@ -115,7 +115,7 @@ export default function PrismPage({
           <div className="text-center">
             <h1 className="text-3xl font-bold text-red-500">Prism Not Found</h1>
             <p className="text-gray-400 mt-2">
-              The prism you're looking for doesn't exist or you don't have permission to view it.
+              The prism you&apos;re looking for doesn&apos;t exist or you don&apos;t have permission to view it.
             </p>
             <Button
               onClick={() => router.push('/prisms')}

@@ -12,7 +12,7 @@ interface Contact {
   screenName: string | null;
   email: string | null;
   nostrPubkey: string | null;
-  metadata: any;
+  metadata: Record<string, unknown> | null;
 }
 
 export default function ContactsPage() {
@@ -141,7 +141,7 @@ export default function ContactsPage() {
                 </svg>
               </Link>
             </div>
-            {contact.metadata && contact.metadata.bio && (
+            {contact.metadata && typeof contact.metadata === 'object' && 'bio' in contact.metadata && typeof contact.metadata.bio === 'string' && (
               <p className="mt-3 text-gray-300">{contact.metadata.bio}</p>
             )}
           </div>

@@ -9,7 +9,7 @@ interface PhoenixInfo {
   blocks: number;
   connections: number;
   chain: string;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 export default function PhoenixInfo() {
@@ -73,9 +73,9 @@ export default function PhoenixInfo() {
   const stats = [
     { label: 'Version', value: info.version },
     { label: 'Network', value: info.chain },
-    { label: 'Block Height', value: info.blockHeight?.toLocaleString() },
-    { label: 'Channels', value: parseInt(info.channels) },
-    { label: 'NodeID', value: info.nodeId },
+    { label: 'Block Height', value: typeof info.blockHeight === 'number' ? info.blockHeight.toLocaleString() : undefined },
+    { label: 'Channels', value: typeof info.channels === 'string' ? parseInt(info.channels) : typeof info.channels === 'number' ? info.channels : undefined },
+    { label: 'NodeID', value: typeof info.nodeId === 'string' ? info.nodeId : undefined },
   ];
 
   return (

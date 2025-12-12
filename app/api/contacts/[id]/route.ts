@@ -7,9 +7,9 @@ const prisma = new PrismaClient();
 
 export async function GET(
   request: NextRequest,
-  context: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
-  const { id } = await Promise.resolve(context.params);
+  const { id } = await context.params;
 
   try {
     await requireSuperAdmin();
@@ -43,9 +43,9 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  context: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
-  const { id } = await Promise.resolve(context.params);
+  const { id } = await context.params;
 
   try {
     await requireSuperAdmin();

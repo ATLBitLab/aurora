@@ -173,7 +173,8 @@ export default function ContactCard({ contact, variant = 'open' }: ContactCardPr
   };
 
   // Get remaining prism count (after showing first 3)
-  const remainingPrismCount = sharedPrisms.length > 3 ? sharedPrisms.length - 3 : 0;
+  const prismCount = sharedPrisms.length;
+  const remainingPrismCount = prismCount > 3 ? prismCount - 3 : 0;
   const visiblePrisms = sharedPrisms.slice(0, 3);
 
   // Only show the details section for the "open" variant
@@ -185,44 +186,38 @@ export default function ContactCard({ contact, variant = 'open' }: ContactCardPr
       <div className="flex items-center justify-between w-full">
         {/* Shared Prisms with Thumbnails */}
         <div className="flex items-center gap-1 flex-1 min-w-0">
-          {sharedPrisms.length > 0 && (
-            <>
-              <div className="flex items-center -mr-2">
-                {/* Show up to 3 prism thumbnails */}
-                {visiblePrisms.map((prism, index) => (
-                  <div 
-                    key={prism.id} 
-                    className="w-[27px] h-[27px] relative shrink-0 -ml-[10px] first:ml-0 rounded-full overflow-hidden border border-gray-700"
-                  >
-                    {prism.thumbnail ? (
-                      <img 
-                        src={prism.thumbnail} 
-                        alt={prism.name}
-                        className="w-full h-full object-cover"
-                        onError={(e) => {
-                          // Fallback to blank if image fails to load
-                          e.currentTarget.style.display = 'none';
-                        }}
-                      />
-                    ) : (
-                      // Blank thumbnail if no profile set
-                      <div className="w-full h-full bg-gray-800" />
-                    )}
-                  </div>
-                ))}
+          <div className="flex items-center -mr-2">
+            {/* Show up to 3 prism thumbnails */}
+            {visiblePrisms.map((prism) => (
+              <div 
+                key={prism.id} 
+                className="w-[27px] h-[27px] relative shrink-0 -ml-[10px] first:ml-0 rounded-full overflow-hidden border border-gray-700"
+              >
+                {prism.thumbnail ? (
+                  <img 
+                    src={prism.thumbnail} 
+                    alt={prism.name}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      // Fallback to blank if image fails to load
+                      e.currentTarget.style.display = 'none';
+                    }}
+                  />
+                ) : (
+                  // Blank thumbnail if no profile set
+                  <div className="w-full h-full bg-gray-800" />
+                )}
               </div>
-              {remainingPrismCount > 0 && (
-                <div className="flex items-center gap-0.5 ml-1 min-w-0">
-                  <p className="text-white text-[8px] font-medium leading-[8px] whitespace-nowrap">
-                    +{remainingPrismCount}
-                  </p>
-                  <p className="text-white text-[8px] font-medium leading-[8px] whitespace-nowrap">
-                    prism
-                  </p>
-                </div>
-              )}
-            </>
-          )}
+            ))}
+          </div>
+          <div className="flex items-center gap-0.5 ml-1 min-w-0">
+            <p className="text-white text-[8px] font-medium leading-[8px] whitespace-nowrap">
+              +{prismCount}
+            </p>
+            <p className="text-white text-[8px] font-medium leading-[8px] whitespace-nowrap">
+              prism
+            </p>
+          </div>
         </div>
 
         {/* CTA Buttons: Edit Profile and Share Profile */}

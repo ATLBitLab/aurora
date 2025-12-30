@@ -15,8 +15,8 @@ This is a work in progress. Things are rapidly being built and changed on variou
 ## Prerequisites
 
 - Node.js (v18 or later)
+- Docker and Docker Compose
 - A Phoenix node running locally or remotely
-- Docker and Docker Compose (only needed for local database setup)
 
 1. Clone the repository:
 ```bash
@@ -37,78 +37,44 @@ cp .env.example .env
 
 ## Database Setup
 
-Aurora uses PostgreSQL for data storage. You have two options:
+Aurora uses PostgreSQL for data storage, running in Docker for easy setup and management.
 
-### Option 1: Staging Database (Recommended for Frontend Developers)
 
-Use the hosted Supabase database - no Docker required! This is the recommended option for frontend developers who want to focus on UI/UX without worrying about backend setup.
+If you are only working on the frontned UI, you can use a staging database on Supabase. In your `.env`, add this:
 
-1. **Get the connection string:**
-   - Contact your team lead for the Supabase database connection string
-   - Or access it from the Supabase dashboard: Settings → Database → Connection string (use the "URI" format)
+```
+DATABASE_URL="postgresql://postgres.PROJECT_ID:PASSWORD@aws-1-us-east-2.pooler.supabase.com:5432/postgres"
+```
 
-2. **Set up your environment:**
-   ```bash
-   # Create a .env file in the project root
-   DATABASE_URL="postgresql://postgres:[PASSWORD]@db.[PROJECT_REF].supabase.co:5432/postgres?sslmode=require"
-   PHOENIXD_HOST=localhost
-   PHOENIXD_HTTP_PASS_LIMITED=abc123
-   ```
+Replace `PROJECT_ID` and `PASSWORD` with the proper credentials.
 
-3. **Sync the database schema:**
-   ```bash
-   # This applies existing migrations to the staging database
-   npx prisma migrate deploy
-   ```
 
-4. **Load sample data (optional):**
-   ```bash
-   npx prisma db seed
-   ```
+### Starting the Database (Devs Only)
 
-That's it! You're ready to develop. The staging database is shared, so you'll see data from other developers.
+1. Start the PostgreSQL container:
+```bash
+docker compose up -d
+```
 
-### Option 2: Local Database (For Self-Hosting)
+This will:
+- Create a PostgreSQL 15 instance
+- Set up a persistent volume for data storage
+- Expose the database on port 5432
+- Configure the following credentials:
+  - User: aurora
+  - Password: aurora_dev_password
+  - Database: aurora_db
 
-Run PostgreSQL in Docker on your local machine. Use this option if you want a completely isolated database or are self-hosting the project.
-
-1. **Start the PostgreSQL container:**
-   ```bash
-   docker compose up -d
-   ```
-
-   This will:
-   - Create a PostgreSQL 15 instance
-   - Set up a persistent volume for data storage
-   - Expose the database on port 5432
-   - Configure the following credentials:
-     - User: aurora
-     - Password: aurora_dev_password
-     - Database: aurora_db
-
-2. **Set up your environment:**
-   ```bash
-   # Create a .env file in the project root
-   DATABASE_URL="postgresql://aurora:aurora_dev_password@localhost:5432/aurora_db"
-   PHOENIXD_HOST=localhost
-   PHOENIXD_HTTP_PASS_LIMITED=abc123
-   ```
-
-3. **Apply database migrations:**
-   ```bash
-   npx prisma migrate dev
-   ```
+2. Apply database migrations:
+```bash
+npx prisma migrate dev
+```
 
 ### Loading Sample Data
 
 The project includes seed data to help you get started quickly. The seed data includes 5 sample contacts with various fields and metadata:
 
-**For Staging Database:**
-```bash
-npx prisma db seed
-```
-
-**For Local Database:**
+1. Load the seed data:
 ```bash
 npx prisma db seed
 ```
@@ -120,9 +86,9 @@ This will create sample contacts including:
 - Carol Crypto (privacy advocate)
 - Dave Decentralized (web5 developer)
 
-**Note:** On the staging database, seed data is shared. If you want to reset and reload seed data on your local database:
+To reset the database and reload seed data:
 ```bash
-# Reset the local database
+# Reset the database
 npx prisma migrate reset
 
 # Or manually:
@@ -132,7 +98,7 @@ npx prisma db seed
 
 ### Managing the Database
 
-**For Local Database (Docker):**
+Common database management commands:
 
 ```bash
 # View database logs
@@ -146,19 +112,12 @@ docker compose down -v
 
 # Access PostgreSQL CLI
 docker compose exec postgres psql -U aurora -d aurora_db
-```
 
-**For Both Options:**
-
-```bash
 # Generate Prisma client after schema changes
 npx prisma generate
 
-# Create a new migration after schema changes (local only)
+# Create a new migration after schema changes
 npx prisma migrate dev --name <migration_name>
-
-# Apply migrations to staging database
-npx prisma migrate deploy
 ```
 
 ### Database Structure

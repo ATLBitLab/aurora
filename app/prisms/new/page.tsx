@@ -185,10 +185,10 @@ export default function NewPrismPage() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="max-w-2xl mx-auto">
-        <div className="flex items-center justify-between mb-8">
-          <h1 className="text-3xl font-bold">Create New Prism</h1>
+    <div className="w-full px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
+      <div className="max-w-[1136px] mx-auto">
+        <div className="flex items-center justify-between mb-8 sm:mb-10">
+          <h1 className="text-[32px] font-medium leading-[18px] text-white">Create New Prism</h1>
           <Button
             onClick={() => router.back()}
             text="Cancel"

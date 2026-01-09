@@ -61,16 +61,18 @@ export default function ContactsPage() {
 
   if (loading) {
     return (
-      <div className="mx-auto w-full max-w-[1280px] px-4 py-8">
-        <div className="animate-pulse">
-          <div className="h-8 bg-gray-800 rounded w-1/4 mb-8"></div>
-          <div className="space-y-4">
-            {[...Array(5)].map((_, i) => (
-              <div key={i} className="bg-gray-800 p-6 rounded-lg">
-                <div className="h-4 bg-gray-700 rounded w-1/4 mb-3"></div>
-                <div className="h-3 bg-gray-700 rounded w-1/2"></div>
-              </div>
-            ))}
+      <div className="w-full px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
+        <div className="max-w-[1136px] mx-auto">
+          <div className="animate-pulse">
+            <div className="h-8 bg-[#030404] rounded w-1/4 mb-8 sm:mb-10"></div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+              {[...Array(5)].map((_, i) => (
+                <div key={i} className="bg-[#030404] p-6 rounded-lg h-[200px]">
+                  <div className="h-4 bg-gray-700 rounded w-1/4 mb-3"></div>
+                  <div className="h-3 bg-gray-700 rounded w-1/2"></div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
@@ -79,40 +81,44 @@ export default function ContactsPage() {
 
   if (error) {
     return (
-      <div className="mx-auto w-full max-w-[1280px] px-4 py-8">
-        <div className="bg-red-900/50 border border-red-800 rounded-lg p-6">
-          <h2 className="text-xl font-semibold text-red-200 mb-2">Error</h2>
-          <p className="text-red-300">{error}</p>
-          <Button 
-            onClick={() => {
-              setError(null);
-              setLoading(true);
-              router.refresh();
-            }}
-            text="Try Again"
-            style="Secondary"
-            className="mt-4"
-          />
+      <div className="w-full px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
+        <div className="max-w-[1136px] mx-auto">
+          <div className="bg-red-900/50 border border-red-800 rounded-lg p-6">
+            <h2 className="text-xl font-semibold text-red-200 mb-2">Error</h2>
+            <p className="text-red-300">{error}</p>
+            <Button 
+              onClick={() => {
+                setError(null);
+                setLoading(true);
+                router.refresh();
+              }}
+              text="Try Again"
+              style="Secondary"
+              className="mt-4"
+            />
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="mx-auto w-full max-w-[1280px] px-4 py-8">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold">Contacts</h1>
-        <Button
-          onClick={() => router.push('/contacts/add')}
-          text="Add Contact"
-          style="Primary"
-        />
-      </div>
+    <div className="w-full px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
+      <div className="max-w-[1136px] mx-auto">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0 mb-8 sm:mb-10">
+          <h1 className="text-[32px] font-medium leading-[18px] text-white">Contacts</h1>
+          <Button
+            onClick={() => router.push('/contacts/add')}
+            text="Add Contact"
+            style="Primary"
+          />
+        </div>
 
-      <div className="grid grid-cols-[repeat(auto-fit,minmax(260px,1fr))] gap-4">
-        {contacts.map((contact) => (
-          <ContactCard key={contact.id} contact={contact} />
-        ))}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+          {contacts.map((contact) => (
+            <ContactCard key={contact.id} contact={contact} />
+          ))}
+        </div>
       </div>
     </div>
   );

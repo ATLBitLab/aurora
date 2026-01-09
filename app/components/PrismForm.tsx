@@ -143,10 +143,10 @@ export default function PrismForm({
 
   if (loading) {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="max-w-2xl mx-auto">
+      <div className="w-full px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
+        <div className="max-w-[1136px] mx-auto">
           <div className="animate-pulse">
-            <div className="h-8 bg-gray-800 rounded w-1/4 mb-8"></div>
+            <div className="h-8 bg-[#030404] rounded w-1/4 mb-8 sm:mb-10"></div>
             <div className="space-y-4">
               <div className="h-4 bg-gray-800 rounded w-1/2"></div>
               <div className="h-4 bg-gray-800 rounded w-3/4"></div>
@@ -159,9 +159,9 @@ export default function PrismForm({
   }
 
   return (
-    <div className="container mx-auto px-4 pt-24 pb-8">
-      <div className="max-w-2xl mx-auto">
-        <div className="flex items-center justify-between mb-8">
+    <div className="w-full px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
+      <div className="max-w-[1136px] mx-auto">
+        <div className="flex items-center justify-between mb-8 sm:mb-10">
           <h1 className="text-3xl font-bold">{title}</h1>
           <Button
             onClick={() => router.back()}

@@ -181,7 +181,7 @@ export default function ContactCard({ contact, variant = 'open' }: ContactCardPr
   const showDetailsSection = variant === 'open';
 
   return (
-    <div className="bg-black flex flex-col gap-8 items-center min-w-[260px] overflow-hidden p-3 rounded-2xl w-full">
+    <div className="bg-[#030404] flex flex-col gap-8 items-center min-w-[260px] overflow-hidden p-3 rounded-2xl w-full">
       {/* Header with Shared Prisms and CTAs */}
       <div className="flex items-center justify-between w-full">
         {/* Shared Prisms with Thumbnails */}
@@ -279,7 +279,7 @@ export default function ContactCard({ contact, variant = 'open' }: ContactCardPr
 
         {/* Details Section */}
         {showDetailsSection && (
-          <div className="bg-[#252525] flex flex-col items-start p-2 rounded-xl w-full">
+          <div className="bg-[#292e2d] flex flex-col items-start p-2 rounded-xl w-full">
             <button
               onClick={toggleDetails}
               className="flex items-center justify-between w-full cursor-pointer"
@@ -287,7 +287,7 @@ export default function ContactCard({ contact, variant = 'open' }: ContactCardPr
               <div className="flex items-center gap-1">
                 <p className="text-white text-xs font-medium leading-4">Details</p>
                 {detailsCount > 0 && (
-                  <div className="bg-black flex items-center justify-center p-1 rounded-full w-4 h-4">
+                  <div className="bg-[#030404] flex items-center justify-center p-1 rounded-full w-4 h-4">
                     <p className="text-white text-[8px] font-medium leading-4 text-center w-full">
                       {detailsCount}
                     </p>

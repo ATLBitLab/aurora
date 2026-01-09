@@ -90,7 +90,7 @@ export default function EditContactPage({
 
   if (loading) {
     return (
-      <div className="container mx-auto px-4 pt-24 pb-8">
+      <div className="container mx-auto px-4 py-8">
         <div className="max-w-2xl mx-auto">
           <div className="animate-pulse">
             <div className="h-8 bg-gray-800 rounded w-1/4 mb-8"></div>

@@ -61,7 +61,7 @@ export default function ContactsPage() {
 
   if (loading) {
     return (
-      <div className="mx-auto w-full max-w-[1280px] px-4 pt-24 pb-8">
+      <div className="mx-auto w-full max-w-[1280px] px-4 py-8">
         <div className="animate-pulse">
           <div className="h-8 bg-gray-800 rounded w-1/4 mb-8"></div>
           <div className="space-y-4">
@@ -79,7 +79,7 @@ export default function ContactsPage() {
 
   if (error) {
     return (
-      <div className="mx-auto w-full max-w-[1280px] px-4 pt-24 pb-8">
+      <div className="mx-auto w-full max-w-[1280px] px-4 py-8">
         <div className="bg-red-900/50 border border-red-800 rounded-lg p-6">
           <h2 className="text-xl font-semibold text-red-200 mb-2">Error</h2>
           <p className="text-red-300">{error}</p>
@@ -99,7 +99,7 @@ export default function ContactsPage() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-[1280px] px-4 pt-24 pb-8">
+    <div className="mx-auto w-full max-w-[1280px] px-4 py-8">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold">Contacts</h1>
         <Button

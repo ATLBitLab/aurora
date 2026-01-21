@@ -4,24 +4,23 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { 
-  LayoutDashboard, 
-  Receipt, 
-  Users,
-  Network,
-  Gem,
-  ChevronLeft
-} from 'lucide-react';
+import { iconTokens } from '@/app/lib/iconTokens';
+import { ChevronLeft } from 'lucide-react';
 
 interface NavItem {
   label: string;
   href: string;
-  icon: React.ComponentType<{ className?: string }>;
+  icon: {
+    default: string;
+    green?: string;
+  };
+  iconClassName?: string;
   notificationCount?: number;
 }
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const [isMounted, setIsMounted] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [notificationCounts, setNotificationCounts] = useState<{
     dashboard?: number;
@@ -30,6 +29,7 @@ export default function Sidebar() {
 
   // Load collapsed state from localStorage on mount
   useEffect(() => {
+    setIsMounted(true);
     const savedState = localStorage.getItem('sidebarCollapsed');
     if (savedState !== null) {
       setIsCollapsed(savedState === 'true');
@@ -63,10 +63,10 @@ export default function Sidebar() {
   };
 
   const navItems: NavItem[] = [
-    { label: 'Dashboard', href: '/', icon: LayoutDashboard, notificationCount: notificationCounts.dashboard },
-    { label: 'Prisms', href: '/prisms', icon: Gem, notificationCount: notificationCounts.prisms },
-    { label: 'Contacts', href: '/contacts', icon: Users },
-    { label: 'Node Info', href: '/node', icon: Network },
+    { label: 'Dashboard', href: '/', icon: iconTokens.dashboard, notificationCount: notificationCounts.dashboard },
+    { label: 'Prisms', href: '/prisms', icon: iconTokens.prisms, notificationCount: notificationCounts.prisms },
+    { label: 'Contacts', href: '/contacts', icon: iconTokens.contacts, iconClassName: 'w-[15px] h-[19px]' },
+    { label: 'Node Info', href: '/node', icon: iconTokens.settings },
   ];
 
   const isActive = (href: string) => {
@@ -75,6 +75,10 @@ export default function Sidebar() {
     }
     return pathname.startsWith(href);
   };
+
+  if (!isMounted) {
+    return null;
+  }
 
   return (
     <div 
@@ -125,7 +129,7 @@ export default function Sidebar() {
       <div className="flex flex-col gap-6 items-start w-full">
         {navItems.map((item) => {
           const active = isActive(item.href);
-          const Icon = item.icon;
+          const iconSrc = active ? item.icon.green || item.icon.default : item.icon.default;
           
           return (
             <Link
@@ -170,10 +174,12 @@ export default function Sidebar() {
                           active ? 'w-[36px] h-[38px]' : 'w-[36px] h-[36px]'
                         )}
                       >
-                        <Icon
+                        <img
+                          src={iconSrc}
+                          alt=""
                           className={cn(
-                            'w-4 h-4 shrink-0',
-                            active ? 'text-[#00ffc8]' : 'text-white'
+                            'shrink-0 object-contain',
+                            item.iconClassName ?? 'w-[16px] h-[16px]'
                           )}
                         />
                       </div>
@@ -197,10 +203,12 @@ export default function Sidebar() {
                             active ? 'h-[38px]' : 'h-[36px]'
                           )}
                         >
-                          <Icon
+                          <img
+                            src={iconSrc}
+                            alt=""
                             className={cn(
-                              'w-4 h-4 shrink-0',
-                              active ? 'text-[#00ffc8]' : 'text-white'
+                              'shrink-0 object-contain',
+                              item.iconClassName ?? 'w-[16px] h-[16px]'
                             )}
                           />
                         </div>

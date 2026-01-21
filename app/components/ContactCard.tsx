@@ -181,7 +181,7 @@ export default function ContactCard({ contact, variant = 'open' }: ContactCardPr
   const showDetailsSection = variant === 'open';
 
   return (
-    <div className="bg-[#030404] flex flex-col gap-8 items-center min-w-[260px] overflow-hidden p-3 rounded-2xl w-full">
+    <div className="bg-[#0a0f0e] border border-white/15 flex flex-col gap-8 items-center min-w-[260px] overflow-hidden p-3 rounded-2xl w-full">
       {/* Header with Shared Prisms and CTAs */}
       <div className="flex items-center justify-between w-full">
         {/* Shared Prisms with Thumbnails */}

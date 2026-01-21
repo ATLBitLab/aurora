@@ -122,44 +122,44 @@ export default function PrismInfoCard({
         </div>
 
         {/* Breakdown Items */}
-        <div className="flex items-center justify-between w-full gap-1">
+        <div className="flex items-center justify-between w-full">
           {/* Total Deposited (Green) */}
-          <div className="flex gap-[3.289px] items-center shrink-0 min-w-0 flex-1">
+          <div className="flex gap-[3.289px] items-center">
             <div className="bg-[#0acaa1] h-[28.776px] rounded-full w-[2.467px] shrink-0" />
-            <div className="flex flex-col gap-[6.577px] items-start min-w-0 overflow-hidden">
-              <p className="text-[#0acaa1] leading-[14.799px] overflow-hidden text-ellipsis whitespace-nowrap">
+            <div className="flex flex-col gap-[6.577px] items-start">
+              <p className="text-[#0acaa1] leading-[14.799px] whitespace-nowrap">
                 <span className="text-[9.044px] font-normal">$ </span>
                 <span className="text-[12.333px] font-normal">{formatCurrency(totalCollected)}</span>
               </p>
-              <p className="text-white text-[9.044px] font-medium leading-[14.799px] whitespace-nowrap overflow-hidden text-ellipsis">
+              <p className="text-white text-[9.044px] font-medium leading-[14.799px] whitespace-nowrap">
                 Total deposited
               </p>
             </div>
           </div>
 
           {/* Total Dispatched (Yellow) */}
-          <div className="flex gap-[3.289px] items-center shrink-0 min-w-0 flex-1">
+          <div className="flex gap-[3.289px] items-center">
             <div className="bg-[#ffd905] h-[28.776px] rounded-full w-[2.467px] shrink-0" />
-            <div className="flex flex-col gap-[6.577px] items-start min-w-0 overflow-hidden">
-              <p className="text-[#ffd905] leading-[14.799px] overflow-hidden text-ellipsis whitespace-nowrap">
+            <div className="flex flex-col gap-[6.577px] items-start">
+              <p className="text-[#ffd905] leading-[14.799px] whitespace-nowrap">
                 <span className="text-[9.044px] font-normal">$ </span>
                 <span className="text-[12.333px] font-normal">{formatCurrency(totalDispatched)}</span>
               </p>
-              <p className="text-white text-[9.044px] font-medium leading-[14.799px] whitespace-nowrap overflow-hidden text-ellipsis">
+              <p className="text-white text-[9.044px] font-medium leading-[14.799px] whitespace-nowrap">
                 Total dispatched
               </p>
             </div>
           </div>
 
           {/* Pending (Red) */}
-          <div className="flex gap-[3.289px] items-center shrink-0 min-w-0 flex-1">
+          <div className="flex gap-[3.289px] items-center">
             <div className="bg-[#ff0509] h-[28.776px] rounded-full w-[2.467px] shrink-0" />
-            <div className="flex flex-col gap-[6.577px] items-start min-w-0 overflow-hidden">
-              <p className="text-[#ff0509] leading-[14.799px] overflow-hidden text-ellipsis whitespace-nowrap">
+            <div className="flex flex-col gap-[6.577px] items-start">
+              <p className="text-[#ff0509] leading-[14.799px] whitespace-nowrap">
                 <span className="text-[9.044px] font-normal">$ </span>
                 <span className="text-[12.333px] font-normal">{formatCurrency(pending)}</span>
               </p>
-              <p className="text-white text-[9.044px] font-medium leading-[14.799px] whitespace-nowrap overflow-hidden text-ellipsis">
+              <p className="text-white text-[9.044px] font-medium leading-[14.799px] whitespace-nowrap">
                 Pending
               </p>
             </div>

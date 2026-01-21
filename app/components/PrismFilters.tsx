@@ -106,7 +106,8 @@ export default function PrismFilters({
     return 'Select Date';
   };
 
-  const getUserDisplayName = (contact: Contact): string => {
+  const getUserDisplayName = (contact?: Contact | null): string => {
+    if (!contact) return 'Select User';
     if (contact.firstName && contact.lastName) return `${contact.firstName} ${contact.lastName}`;
     if (contact.screenName) return contact.screenName;
     if (contact.email) return contact.email;
@@ -209,7 +210,9 @@ export default function PrismFilters({
             className="border-[0.5px] border-[#66706f] flex items-center justify-center px-4 py-3 rounded-full shrink-0 cursor-pointer hover:border-white/50 transition-colors"
           >
             <p className="text-white text-[12px] font-normal leading-[18px] text-center whitespace-nowrap">
-              {selectedUserId === 'all' ? 'Select User' : getUserDisplayName(contacts.find(c => c.id === selectedUserId) || contacts[0])}
+              {selectedUserId === 'all'
+                ? 'Select User'
+                : getUserDisplayName(contacts.find(c => c.id === selectedUserId))}
             </p>
           </button>
           {isUserDropdownOpen && (
@@ -250,7 +253,9 @@ export default function PrismFilters({
             className="border-[0.5px] border-[#66706f] flex items-center justify-center px-4 py-3 rounded-full shrink-0 cursor-pointer hover:border-white/50 transition-colors"
           >
             <p className="text-white text-[12px] font-normal leading-[18px] text-center whitespace-nowrap">
-              {selectedPrismId === 'all' ? 'Select Prism' : (prisms.find(p => p.id === selectedPrismId)?.name || 'Select Prism')}
+              {selectedPrismId === 'all'
+                ? 'Select Prism'
+                : (prisms.find(p => p.id === selectedPrismId)?.name || 'Select Prism')}
             </p>
           </button>
           {isPrismDropdownOpen && (

@@ -1,7 +1,11 @@
 'use client';
 
 import Link from 'next/link';
-import { EyeIcon, BoltIcon } from '@heroicons/react/24/outline';
+
+const defaultBackground = 'https://www.figma.com/api/mcp/asset/ec6a8480-973a-4af5-9dff-07703330130f';
+const eyeIcon = 'https://www.figma.com/api/mcp/asset/f0079a08-188f-4220-9ed7-13b55032f84b';
+const activeDot = 'https://www.figma.com/api/mcp/asset/4e967eae-b5c4-4ac3-b9a2-5f34c5206e9b';
+const boltIcon = 'https://www.figma.com/api/mcp/asset/a267a0c2-a136-4748-be4b-1bf53d5711d4';
 
 interface PrismFaceCardProps {
   id: string;
@@ -41,7 +45,7 @@ export default function PrismFaceCard({
   const relativeTime = formatRelativeTime(createdAt);
   
   // Default thumbnail - using a placeholder or the provided thumbnail
-  const backgroundImage = thumbnail || 'https://www.figma.com/api/mcp/asset/44f41841-12c0-4451-9d26-d0a030e9a0d2';
+  const backgroundImage = thumbnail || defaultBackground;
 
   return (
     <Link href={`/prisms/${id}`} className="block">
@@ -56,7 +60,13 @@ export default function PrismFaceCard({
         {/* Top-left Badge with Eye Icon and Time */}
         {relativeTime && (
           <div className="absolute top-0 left-0 flex items-center gap-[3px] p-[8px] rounded-tl-[12px] rounded-br-[12px] bg-black/40 backdrop-blur-[11.6px]">
-            <EyeIcon className="w-3 h-3 text-white shrink-0" />
+            <div className="relative shrink-0 w-[12px] h-[12px]">
+              <div className="absolute inset-[21.63%_12.34%]">
+                <div className="absolute inset-[-7.34%_-5.53%]">
+                  <img src={eyeIcon} alt="Eye icon" className="w-full h-full object-contain" />
+                </div>
+              </div>
+            </div>
             <p className="text-white text-[8px] font-medium leading-[14px] whitespace-nowrap">
               {relativeTime}
             </p>
@@ -64,7 +74,7 @@ export default function PrismFaceCard({
         )}
 
         {/* Bottom Gradient Overlay */}
-        <div className="absolute bottom-0 left-0 right-0 h-[95px] bg-gradient-to-t from-[#030404] from-[17.903%] to-[rgba(55,63,62,0)] to-[252.28%] backdrop-blur-[10px] rounded-[12px] p-3 flex flex-col justify-between">
+        <div className="absolute bottom-0 left-0 right-0 h-[95px] bg-gradient-to-t from-[#030404] from-[17.903%] to-[rgba(55,63,62,0)] to-[252.28%] backdrop-blur-[10px] rounded-[12px] p-3 flex flex-col gap-8">
           {/* Title and Transaction Indicator */}
           <div className="flex flex-col gap-2">
             <div className="flex items-center justify-center">
@@ -75,7 +85,7 @@ export default function PrismFaceCard({
             
             {newTransactions > 0 && (
               <div className="flex items-center gap-1">
-                <div className="w-1 h-1 rounded-full bg-[#00ffc8] shrink-0" />
+                <img src={activeDot} alt="" className="w-1 h-1 shrink-0" />
                 <p className="text-[#00ffc8] text-[11px] font-medium leading-[14px]">
                   {newTransactions} new Transaction{newTransactions > 1 ? 's' : ''}
                 </p>
@@ -96,7 +106,11 @@ export default function PrismFaceCard({
             {/* Amount with Lightning Icon */}
             <div className="flex items-center gap-1">
               <div className="flex items-end">
-                <BoltIcon className="w-2 h-2 text-white" />
+                <div className="w-[8px] h-[8.176px] relative">
+                  <div className="absolute inset-[-6.12%_-6.25%]">
+                    <img src={boltIcon} alt="" className="w-full h-full object-contain" />
+                  </div>
+                </div>
               </div>
               <p className="text-white text-[15px] font-semibold leading-[11.2px] text-center">
                 {typeof totalAmount === 'number' ? `$${totalAmount.toLocaleString()}` : totalAmount}

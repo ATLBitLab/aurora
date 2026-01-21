@@ -1,9 +1,10 @@
 'use client';
 
 import { useNostr } from '../contexts/NostrContext';
-import { Search, Bell, LogOut, ChevronDown, Sparkles } from 'lucide-react';
+import { Search, LogOut, ChevronDown, Sparkles } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
+import { iconTokens } from '@/app/lib/iconTokens';
 
 export default function TopNav() {
   const { publicKey, npub, logout } = useNostr();
@@ -94,7 +95,11 @@ export default function TopNav() {
           {/* Notifications Icon */}
           <div className="flex items-center justify-center shrink-0 h-[50px]">
             <button className="flex h-[50px] w-[50px] items-center justify-center hover:opacity-70 transition-opacity">
-              <Bell className="w-5 h-5 text-white" />
+              <img
+                src={iconTokens.notifications.default}
+                alt="Notifications"
+                className="w-5 h-5"
+              />
             </button>
           </div>
         </div>

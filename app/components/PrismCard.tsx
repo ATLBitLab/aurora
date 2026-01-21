@@ -69,7 +69,7 @@ export default function PrismCard({
 
   return (
     <Link href={`/prisms/${id}`} className="block">
-      <div className="relative w-[313px] h-[320px] rounded-[12px] overflow-hidden border border-white/25 hover:border-white/40 transition-colors cursor-pointer">
+      <div className="relative w-full max-w-[313px] min-h-[320px] h-[320px] rounded-[12px] overflow-hidden border border-white/25 bg-[#0a0f0e] shadow-[0_0_0_1px_rgba(255,255,255,0.12)] hover:border-white/40 transition-colors cursor-pointer">
         {/* Background Image */}
         <img
           src={cardBackgroundImage}

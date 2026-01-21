@@ -44,52 +44,21 @@ export default function Button({
 
   const iconElement = showIcon && (icon || defaultIcon);
 
-  if (style === 'Secondary') {
-    return (
-      <button
-        type={type}
-        onClick={onClick}
-        disabled={disabled}
-        className={cn(
-          'border border-[#5f5f5f] relative rounded-full',
-          'bg-gradient-radial from-[#0a0a0a] via-[#171616] to-[#363535]',
-          'hover:opacity-90 transition-opacity',
-          'disabled:opacity-50 disabled:cursor-not-allowed',
-          className
-        )}
-        style={{
-          backgroundImage: `radial-gradient(ellipse at top right, rgba(10,10,10,1) 0%, rgba(23,22,22,1) 30.77%, rgba(36,35,35,1) 61.54%, rgba(54,53,53,1) 100%)`,
-        }}
-      >
-        <div className="box-border content-center flex flex-wrap gap-1 items-center justify-center overflow-clip px-4 py-3 relative rounded-[inherit]">
-          {iconElement}
-          <span className="font-normal leading-[18px] relative shrink-0 text-xs text-center text-nowrap text-white whitespace-pre">
-            {text}
-          </span>
-        </div>
-      </button>
-    );
-  }
-
   return (
     <button
       type={type}
       onClick={onClick}
       disabled={disabled}
       className={cn(
-        'border border-[#0acaa1] relative rounded-full',
-        'hover:opacity-90 transition-opacity',
+        'border-[0.5px] border-[#66706f] bg-[#030404] relative rounded-full',
+        'hover:border-white/50 transition-colors',
         'disabled:opacity-50 disabled:cursor-not-allowed',
         className
       )}
-      style={{
-        borderWidth: '3px',
-        backgroundImage: `radial-gradient(ellipse at top right, rgba(10,10,10,1) 0%, rgba(23,22,22,1) 30.77%, rgba(36,35,35,1) 61.54%, rgba(54,53,53,1) 100%)`,
-      }}
     >
-      <div className="box-border content-center flex flex-wrap gap-1 items-center justify-center overflow-clip p-4 relative rounded-[inherit]">
+      <div className="box-border content-center flex flex-wrap gap-1 items-center justify-center overflow-clip px-4 py-3 relative rounded-[inherit]">
         {iconElement}
-        <span className="font-medium leading-[18px] relative shrink-0 text-[13px] text-center text-nowrap text-white whitespace-pre">
+        <span className="font-normal leading-[18px] relative shrink-0 text-[12px] text-center text-nowrap text-white whitespace-pre">
           {text}
         </span>
       </div>

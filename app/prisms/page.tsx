@@ -235,7 +235,7 @@ export default function PrismsPage() {
                 <p className="text-gray-400">No prisms match the selected filters.</p>
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6 sm:gap-6 justify-items-start auto-rows-[320px]">
                 {filteredPrisms.map((prism) => (
                   <PrismCard
                     key={prism.id}

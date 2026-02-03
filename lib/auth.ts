@@ -1,29 +1,58 @@
-import { cookies } from 'next/headers';
+import { betterAuth } from "better-auth";
+import { prismaAdapter } from "better-auth/adapters/prisma";
+import { PrismaClient } from "@prisma/client";
+import type { NextRequest } from "next/server";
 
-export async function validateSuperAdmin(authCookie?: string | null): Promise<boolean> {
-  if (!authCookie) return false;
-  
-  try {
-    const superAdminNpub = process.env.AURORA_SUPER_ADMIN;
-    if (!superAdminNpub) {
-      console.error('AURORA_SUPER_ADMIN environment variable is not set');
-      return false;
-    }
+const prisma = new PrismaClient();
 
-    // The auth cookie contains the user's npub
-    return authCookie === superAdminNpub;
-  } catch (error) {
-    console.error('Error validating super admin:', error);
-    return false;
-  }
+// Get whitelisted emails from environment variable
+function getWhitelistedEmails(): string[] {
+  const whitelist = process.env.ALLOWED_EMAILS;
+  if (!whitelist) return [];
+  return whitelist.split(",").map((email) => email.trim().toLowerCase());
 }
 
-export async function requireSuperAdmin() {
-  const cookieStore = await cookies();
-  const authCookie = cookieStore.get('nostr_auth');
-  const isAuthorized = await validateSuperAdmin(authCookie?.value);
+// Check if email is whitelisted (returns true if no whitelist is configured or if email is in whitelist)
+export function isEmailWhitelisted(email: string): boolean {
+  const whitelist = getWhitelistedEmails();
+  // If no whitelist configured, allow all emails
+  if (whitelist.length === 0) return true;
+  return whitelist.includes(email.toLowerCase());
+}
 
-  if (!isAuthorized) {
-    throw new Error('Unauthorized: Super Admin access required');
-  }
-} 
+export const auth = betterAuth({
+  database: prismaAdapter(prisma, {
+    provider: "postgresql",
+  }),
+  emailAndPassword: {
+    enabled: true,
+    autoSignIn: true,
+    signUpEmail: {
+      enabled: true,
+    },
+  },
+  session: {
+    expiresIn: 60 * 60 * 24 * 7, // 7 days
+    updateAge: 60 * 60 * 24, // Update session every 24 hours
+    cookieCache: {
+      enabled: true,
+      maxAge: 60 * 5, // 5 minutes
+    },
+  },
+  trustedOrigins: process.env.BETTER_AUTH_TRUSTED_ORIGINS
+    ? process.env.BETTER_AUTH_TRUSTED_ORIGINS.split(",")
+    : ["http://localhost:3000"],
+});
+
+export type Session = typeof auth.$Infer.Session;
+
+// Helper to check if request has a valid session
+export async function isAuthenticated(request: NextRequest): Promise<boolean> {
+  const sessionToken = request.cookies.get('better-auth.session_token');
+  return !!sessionToken?.value;
+}
+
+// Helper to validate session from cookies (for server components)
+export async function validateSession(cookieValue: string | undefined): Promise<boolean> {
+  return !!cookieValue;
+}

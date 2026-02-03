@@ -1,22 +1,16 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { PrismaClient } from '@prisma/client';
-import { validateSuperAdmin } from '@/lib/auth';
+import { isAuthenticated } from '@/lib/auth';
 
 const prisma = new PrismaClient();
 
 export async function GET(request: NextRequest) {
   try {
-    // Get the auth cookie
-    const authCookie = request.cookies.get('nostr_auth');
-    console.log('Auth cookie:', authCookie?.value);
-    console.log('Super admin npub:', process.env.AURORA_SUPER_ADMIN);
+    // Check if user is authenticated
+    const authenticated = await isAuthenticated(request);
 
-    // Validate super admin
-    const isAuthorized = await validateSuperAdmin(authCookie?.value);
-    console.log('Is authorized:', isAuthorized);
-
-    if (!isAuthorized) {
+    if (!authenticated) {
       console.log('Unauthorized access attempt');
       return NextResponse.json(
         { error: 'Unauthorized' },
@@ -44,15 +38,10 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    // Get the auth cookie
-    const authCookie = request.cookies.get('nostr_auth');
-    console.log('Auth cookie:', authCookie?.value);
-    
-    // Validate super admin
-    const isAuthorized = await validateSuperAdmin(authCookie?.value);
-    console.log('Is authorized:', isAuthorized);
+    // Check if user is authenticated
+    const authenticated = await isAuthenticated(request);
 
-    if (!isAuthorized) {
+    if (!authenticated) {
       console.log('Unauthorized access attempt');
       return NextResponse.json(
         { error: 'Unauthorized' },
@@ -82,4 +71,4 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     );
   }
-} 
+}

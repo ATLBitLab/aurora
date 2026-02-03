@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
-import { requireSuperAdmin } from '@/lib/auth';
+import { isAuthenticated } from '@/lib/auth';
 import { Prisma } from '@prisma/client';
 
 export async function GET(
@@ -9,7 +9,10 @@ export async function GET(
 ) {
   const { id } = await context.params;
   try {
-    await requireSuperAdmin();
+    const authenticated = await isAuthenticated(request);
+    if (!authenticated) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
 
     const prism = await prisma.prism.findUnique({
       where: { id },
@@ -41,10 +44,6 @@ export async function GET(
   } catch (error) {
     console.error('GET Error:', error instanceof Error ? error.message : 'Unknown error');
     
-    if (error instanceof Error && error.message.includes('Unauthorized')) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-    
     return NextResponse.json(
       { error: 'Internal Server Error' },
       { status: 500 }
@@ -58,7 +57,10 @@ export async function PUT(
 ) {
   const { id } = await context.params;
   try {
-    await requireSuperAdmin();
+    const authenticated = await isAuthenticated(request);
+    if (!authenticated) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
 
     const body = await request.json();
     const { name, slug, description, active, splits } = body;
@@ -159,18 +161,12 @@ export async function PUT(
   } catch (error) {
     console.error('PUT Error:', error instanceof Error ? error.message : 'Unknown error');
 
-    if (error instanceof Error) {
-      if (error.message.includes('Unauthorized')) {
-        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-      }
-      
-      if (error instanceof Prisma.PrismaClientKnownRequestError) {
-        if (error.code === 'P2002') {
-          return NextResponse.json(
-            { error: 'A prism with this slug already exists' },
-            { status: 409 }
-          );
-        }
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      if (error.code === 'P2002') {
+        return NextResponse.json(
+          { error: 'A prism with this slug already exists' },
+          { status: 409 }
+        );
       }
     }
     
@@ -187,7 +183,10 @@ export async function DELETE(
 ) {
   const { id } = await context.params;
   try {
-    await requireSuperAdmin();
+    const authenticated = await isAuthenticated(request);
+    if (!authenticated) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
 
     const prism = await prisma.prism.delete({
       where: { id },
@@ -196,14 +195,10 @@ export async function DELETE(
     return NextResponse.json(prism);
   } catch (error) {
     console.error('DELETE Error:', error instanceof Error ? error.message : 'Unknown error');
-
-    if (error instanceof Error && error.message.includes('Unauthorized')) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
     
     return NextResponse.json(
       { error: 'Internal Server Error' },
       { status: 500 }
     );
   }
-} 
+}

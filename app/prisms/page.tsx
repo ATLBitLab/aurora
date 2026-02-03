@@ -166,7 +166,7 @@ export default function PrismsPage() {
   };
 
   // Extract category from description or return null
-  const getCategory = (prism: Prism): string | null => {
+  const getCategory = (_prism: Prism): string | null => {
     // For now, return null. In the future, this could be extracted from description or metadata
     return null;
   };

@@ -8,7 +8,7 @@ const activeDotIcon = "https://www.figma.com/api/mcp/asset/03c77357-b591-4692-a6
 const icon1 = "https://www.figma.com/api/mcp/asset/20e39bbb-9ca1-4674-9d21-a8b96abb2207";
 const icon2 = "https://www.figma.com/api/mcp/asset/f56321b8-5a73-41f8-8107-334aad1f1b50";
 const icon3 = "https://www.figma.com/api/mcp/asset/c75d0b2d-d6f4-4358-864b-d042460e4e23";
-const avatarMask = "https://www.figma.com/api/mcp/asset/b5173cd2-f68a-4d0f-a434-5ed8a91de376";
+const _avatarMask = "https://www.figma.com/api/mcp/asset/b5173cd2-f68a-4d0f-a434-5ed8a91de376";
 const defaultAvatar = "https://www.figma.com/api/mcp/asset/75fef49e-9d96-4ddd-8b5f-d484c4c78024";
 
 interface Contact {

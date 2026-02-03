@@ -2,12 +2,11 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { ChevronUpIcon, ChevronRightIcon, ChevronLeftIcon, ArrowRightIcon } from '@heroicons/react/24/outline';
+import { ChevronUpIcon, ArrowRightIcon } from '@heroicons/react/24/outline';
 
 const calendarIcon = "https://www.figma.com/api/mcp/asset/c83e973c-82cb-4edc-a5b4-c87f5774c875";
 const starIconFilled = "https://www.figma.com/api/mcp/asset/e4b8e6a1-81fb-4b30-8c31-dad418948756";
 const starIconOutline = "https://www.figma.com/api/mcp/asset/af286206-fd17-4ad9-9042-9ba3cc6cf3cc";
-const chevronRightIcon = "https://www.figma.com/api/mcp/asset/2b212d2d-2875-4356-8198-db09e52ea283";
 const chevronDownIcon = "https://www.figma.com/api/mcp/asset/e353d42f-828c-4a09-a6cf-c4d48027b1b6";
 const arrowLeftIcon = "https://www.figma.com/api/mcp/asset/79630a33-05bd-489c-a889-a56fbcdbdc81";
 
@@ -183,7 +182,7 @@ export default function TransactionTable({
             endDate.setHours(23, 59, 59, 999);
             if (txDate > endDate) return false;
           }
-        } catch (e) {
+        } catch {
           // If date parsing fails, include the transaction
         }
       }
@@ -230,7 +229,7 @@ export default function TransactionTable({
   };
 
   // Get unique payment modes from transactions
-  const paymentModes = Array.from(new Set(displayTransactions.map(t => t.paymentMode).filter(Boolean)));
+  const paymentModes: string[] = Array.from(new Set(displayTransactions.map(t => t.paymentMode).filter((m): m is string => Boolean(m))));
 
   // Get display name for user
   const getUserDisplayName = (contact: { firstName?: string | null; lastName?: string | null; screenName?: string | null; email?: string | null }) => {

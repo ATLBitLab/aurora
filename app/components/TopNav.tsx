@@ -2,7 +2,6 @@
 
 import { useNostr } from '../contexts/NostrContext';
 import { Search, LogOut, ChevronDown, Sparkles } from 'lucide-react';
-import { cn } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
 import { iconTokens } from '@/app/lib/iconTokens';
 

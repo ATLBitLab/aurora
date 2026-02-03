@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { CalendarIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
 
 const prismIconSmall = "https://www.figma.com/api/mcp/asset/10137fb3-e968-48ed-b94b-6b237e0523c2";
 const calendarIcon = "https://www.figma.com/api/mcp/asset/d1d1fdb3-e32a-458c-af2f-e4d6f0045934";

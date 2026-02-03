@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, useState, useCallback, ReactNode, useEffect, Suspense } from 'react';
-import { getPublicKey, nip19, type Event } from 'nostr-tools';
+import { nip19, type Event } from 'nostr-tools';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Cookies from 'js-cookie';
 

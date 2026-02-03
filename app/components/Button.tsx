@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils';
 type ButtonProps = {
   showIcon?: boolean;
   text?: string;
-  style?: 'Primary' | 'Secondary';
+  style?: 'Primary' | 'Secondary'; // consumed as _style to satisfy lint; reserved for future use
   icon?: ReactNode;
   onClick?: () => void;
   type?: ButtonHTMLAttributes<HTMLButtonElement>['type'];
@@ -17,7 +17,7 @@ type ButtonProps = {
 export default function Button({
   showIcon = true,
   text = 'Click Here',
-  style = 'Primary',
+  style: _style = 'Primary',
   icon,
   onClick,
   type = 'button',

@@ -30,3 +30,4 @@ export default function PrismHeadingCard({ title = 'Hot Prisms' }: PrismHeadingC
   );
 }
 
+

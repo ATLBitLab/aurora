@@ -230,27 +230,41 @@ export default function PrismsPage() {
             </div>
 
             {/* Prism Cards */}
-            {filteredPrisms.length === 0 ? (
-              <div className="text-center py-12">
-                <p className="text-gray-400">No prisms match the selected filters.</p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6 sm:gap-6 justify-items-start auto-rows-[320px]">
-                {filteredPrisms.map((prism) => (
-                  <PrismCard
-                    key={prism.id}
-                    id={prism.id}
-                    name={prism.name}
-                    createdAt={prism.createdAt}
-                    active={prism.active}
-                    totalDeposited={0} // TODO: Calculate from actual transaction data
-                    memberCount={getMemberCount(prism)}
-                    category={getCategory(prism)}
-                    primaryAccount={getPrimaryAccount(prism)}
-                  />
-                ))}
-              </div>
-            )}
+            {(() => {
+              const isDefaultFilters =
+                !filters.drafts &&
+                filters.userId === 'all' &&
+                filters.prismId === 'all' &&
+                filters.paymentMode === 'all' &&
+                !filters.dateRange.start &&
+                !filters.dateRange.end;
+              const displayPrisms = isDefaultFilters ? prisms : filteredPrisms;
+
+              if (displayPrisms.length === 0) {
+                return (
+                  <div className="text-center py-12">
+                    <p className="text-gray-400">No prisms match the selected filters.</p>
+                  </div>
+                );
+              }
+              return (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6 sm:gap-6 justify-items-start auto-rows-[320px]">
+                  {displayPrisms.map((prism) => (
+                    <PrismCard
+                      key={prism.id}
+                      id={prism.id}
+                      name={prism.name}
+                      createdAt={prism.createdAt}
+                      active={prism.active}
+                      totalDeposited={0} // TODO: Calculate from actual transaction data
+                      memberCount={getMemberCount(prism)}
+                      category={getCategory(prism)}
+                      primaryAccount={getPrimaryAccount(prism)}
+                    />
+                  ))}
+                </div>
+              );
+            })()}
           </>
         )}
       </div>

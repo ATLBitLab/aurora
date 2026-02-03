@@ -78,8 +78,8 @@ export default function PrismCard({
         />
 
         {/* Top Section */}
-        <div className="absolute top-0 left-0 right-0">
-          <div className="backdrop-blur-[11.6px] bg-black/40 rounded-tl-[12px] rounded-tr-[12px] rounded-br-[12px] p-2 flex flex-col gap-4 w-full">
+        <div className="absolute top-0 left-0 right-0 z-10">
+          <div className="backdrop-blur-[11.6px] bg-black/60 rounded-tl-[12px] rounded-tr-[12px] rounded-br-[12px] p-2 flex flex-col gap-4 w-full">
             {/* Date Row */}
             {formattedDate && (
               <div className="flex items-center gap-[3px] px-1">
@@ -118,7 +118,7 @@ export default function PrismCard({
         </div>
 
         {/* Bottom Section */}
-        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black from-[17.903%] to-[rgba(102,102,102,0)] to-[252.28%] backdrop-blur-[10.55px] rounded-[12px] p-3 flex flex-col gap-4">
+        <div className="absolute bottom-0 left-0 right-0 z-10 bg-gradient-to-t from-black/90 from-[17.903%] to-[rgba(102,102,102,0)] to-[252.28%] backdrop-blur-[10.55px] rounded-[12px] p-3 flex flex-col gap-4">
           {/* Amount and Icons Row */}
           <div className="flex items-center justify-between w-full">
             <div className="flex flex-col gap-2 items-start justify-center">

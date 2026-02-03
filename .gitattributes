@@ -1,0 +1,53 @@
+# Auto detect text files and normalize line endings to LF
+* text=auto eol=lf
+
+# Explicit text files - normalize to LF
+*.ts text eol=lf
+*.tsx text eol=lf
+*.js text eol=lf
+*.jsx text eol=lf
+*.mjs text eol=lf
+*.cjs text eol=lf
+*.json text eol=lf
+*.md text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.css text eol=lf
+*.scss text eol=lf
+*.html text eol=lf
+*.sql text eol=lf
+*.prisma text eol=lf
+*.sh text eol=lf
+*.toml text eol=lf
+
+# Environment files - critical for preventing conflicts
+.env text eol=lf
+.env.* text eol=lf
+*.env text eol=lf
+
+# Config files
+.editorconfig text eol=lf
+.gitattributes text eol=lf
+.gitignore text eol=lf
+*.config.* text eol=lf
+
+# Windows batch files (if any) - keep CRLF
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Binary files - no line ending conversion
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.svg binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.eot binary
+*.pdf binary
+
+# Lock files
+package-lock.json text eol=lf
+yarn.lock text eol=lf

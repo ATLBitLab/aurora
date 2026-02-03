@@ -172,9 +172,7 @@ export default function ContactCard({ contact, variant = 'open' }: ContactCardPr
     return defaultColors[index % defaultColors.length];
   };
 
-  // Get remaining prism count (after showing first 3)
   const prismCount = sharedPrisms.length;
-  const _remainingPrismCount = prismCount > 3 ? prismCount - 3 : 0;
   const visiblePrisms = sharedPrisms.slice(0, 3);
 
   // Only show the details section for the "open" variant

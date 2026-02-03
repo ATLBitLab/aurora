@@ -75,7 +75,7 @@ export default function TopNav() {
               >
                 <Sparkles className="w-3.5 h-3.5 text-white shrink-0" />
                 <p className="font-['Poppins',sans-serif] font-normal leading-normal text-[13px] text-center text-white whitespace-nowrap">
-                  Generator New Prism
+                  Create New Prism
                 </p>
               </button>
 

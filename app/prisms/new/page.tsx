@@ -214,7 +214,7 @@ export default function NewPrismPage() {
                 name="name"
                 value={formData.name}
                 onChange={handleInputChange}
-                className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-purple-500"
+                className="w-full bg-[#292e2d] border border-[#66706f] rounded-lg px-4 py-2 text-white focus:outline-none focus:border-white/50"
                 placeholder="My Payment Split"
               />
             </div>
@@ -228,7 +228,7 @@ export default function NewPrismPage() {
                 name="slug"
                 value={formData.slug}
                 onChange={handleInputChange}
-                className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-purple-500"
+                className="w-full bg-[#292e2d] border border-[#66706f] rounded-lg px-4 py-2 text-white focus:outline-none focus:border-white/50"
                 placeholder="my-payment-split"
               />
             </div>
@@ -242,7 +242,7 @@ export default function NewPrismPage() {
                 value={formData.description}
                 onChange={handleInputChange}
                 rows={3}
-                className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-purple-500"
+                className="w-full bg-[#292e2d] border border-[#66706f] rounded-lg px-4 py-2 text-white focus:outline-none focus:border-white/50"
                 placeholder="What is this prism for?"
               />
             </div>
@@ -264,7 +264,7 @@ export default function NewPrismPage() {
               {formData.splits.map((split, index) => (
                 <div
                   key={index}
-                  className="flex gap-4 items-start bg-gray-800/50 rounded-lg p-4"
+                  className="flex gap-4 items-start bg-[#030404] border border-white/15 rounded-lg p-4"
                 >
                   <div className="flex-1 space-y-4">
                     <div>
@@ -276,7 +276,7 @@ export default function NewPrismPage() {
                         onChange={(e) =>
                           handleSplitChange(index, 'destinationId', e.target.value)
                         }
-                        className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-purple-500"
+                        className="w-full bg-[#292e2d] border border-[#66706f] rounded-lg px-4 py-2 text-white focus:outline-none focus:border-white/50"
                       >
                         <option value="">Select a destination</option>
                         {destinations.map((dest) => (
@@ -302,7 +302,7 @@ export default function NewPrismPage() {
                             min="0"
                             max="100"
                             step="0.01"
-                            className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-purple-500 pr-8"
+                            className="w-full bg-[#292e2d] border border-[#66706f] rounded-lg px-4 py-2 text-white focus:outline-none focus:border-white/50 pr-8"
                           />
                           <span className="absolute right-3 top-2 text-gray-400">
                             %
@@ -320,7 +320,7 @@ export default function NewPrismPage() {
                           onChange={(e) =>
                             handleSplitChange(index, 'description', e.target.value)
                           }
-                          className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-purple-500"
+                          className="w-full bg-[#292e2d] border border-[#66706f] rounded-lg px-4 py-2 text-white focus:outline-none focus:border-white/50"
                           placeholder="What is this split for?"
                         />
                       </div>

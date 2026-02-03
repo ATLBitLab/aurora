@@ -451,7 +451,7 @@ export default function TransactionTable({
                       <button
                         key={mode}
                         onClick={() => {
-                          setSelectedPaymentMode(mode);
+                          if (typeof mode === 'string') setSelectedPaymentMode(mode);
                           setIsPaymentModeDropdownOpen(false);
                         }}
                         className={`w-full text-left px-4 py-2 text-white text-sm hover:bg-white/10 ${

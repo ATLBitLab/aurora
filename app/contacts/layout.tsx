@@ -1,7 +1,6 @@
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { validateSuperAdmin } from '@/lib/auth';
-import Header from '@/app/components/Header';
 
 export default async function ContactsLayout({
   children,
@@ -19,12 +18,7 @@ export default async function ContactsLayout({
       redirect('/');
     }
 
-    return (
-      <>
-        <Header />
-        {children}
-      </>
-    );
+    return <>{children}</>;
   } catch (error) {
     console.error('Error in contacts layout:', error);
     redirect('/');

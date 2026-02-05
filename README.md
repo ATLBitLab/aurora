@@ -154,6 +154,13 @@ The application will be available at `http://localhost:3000`.
 - `PHOENIXD_HTTP_PASS_LIMITED`: Phoenix node limited access password
 - `DATABASE_URL`: PostgreSQL connection string
 
+## Deploying to Vercel
+
+The build uses `yarn run vercel-build` (see `vercel.json`), which runs `prisma generate` then `yarn build`. **Do not** use `prisma migrate dev` in the Vercel build—it requires a live DB and fails on preview/production.
+
+- If the Vercel dashboard has a custom **Build Command**, set it to `yarn run vercel-build` or clear it so `vercel.json` is used.
+- Run migrations against your production DB separately (e.g. `prisma migrate deploy` in a one-off job or CI step with `DATABASE_URL` set).
+
 ## Contributing
 
 1. Create a feature branch

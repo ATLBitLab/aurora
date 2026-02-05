@@ -39,7 +39,17 @@ cp .env.example .env
 
 Aurora uses PostgreSQL for data storage, running in Docker for easy setup and management.
 
-### Starting the Database
+
+If you are only working on the frontned UI, you can use a staging database on Supabase. In your `.env`, add this:
+
+```
+DATABASE_URL="postgresql://postgres.PROJECT_ID:PASSWORD@aws-1-us-east-2.pooler.supabase.com:5432/postgres"
+```
+
+Replace `PROJECT_ID` and `PASSWORD` with the proper credentials.
+
+
+### Starting the Database (Devs Only)
 
 1. Start the PostgreSQL container:
 ```bash

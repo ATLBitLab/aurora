@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { NostrProvider } from "./contexts/NostrContext";
+import { AuthProvider } from "./contexts/AuthContext";
 import Sidebar from "./components/Sidebar";
 import TopNav from "./components/TopNav";
 
@@ -20,7 +20,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.className} min-h-screen bg-[#030404] text-gray-100`}>
-        <NostrProvider>
+        <AuthProvider>
           <div className="flex h-screen overflow-hidden">
             <div className="relative overflow-visible z-10">
               <Sidebar />
@@ -32,7 +32,7 @@ export default function RootLayout({
               </main>
             </div>
           </div>
-        </NostrProvider>
+        </AuthProvider>
       </body>
     </html>
   );

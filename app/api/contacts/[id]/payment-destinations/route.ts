@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
-import { requireSuperAdmin } from '@/lib/auth';
+import { isAuthenticated } from '@/lib/auth';
 import { Prisma } from '@prisma/client';
 
 export async function GET(
@@ -9,7 +9,10 @@ export async function GET(
 ) {
   const { id } = await context.params;
   try {
-    await requireSuperAdmin();
+    const authenticated = await isAuthenticated(request);
+    if (!authenticated) {
+      return new NextResponse('Unauthorized', { status: 401 });
+    }
 
     const destinations = await prisma.paymentDestination.findMany({
       where: {
@@ -22,9 +25,6 @@ export async function GET(
 
     return NextResponse.json(destinations);
   } catch (error) {
-    if (error instanceof Error && error.message.includes('Unauthorized')) {
-      return new NextResponse('Unauthorized', { status: 401 });
-    }
     console.error('Failed to fetch payment destinations:', error);
     return new NextResponse('Internal Server Error', { status: 500 });
   }
@@ -36,7 +36,10 @@ export async function POST(
 ) {
   const { id } = await context.params;
   try {
-    await requireSuperAdmin();
+    const authenticated = await isAuthenticated(request);
+    if (!authenticated) {
+      return new NextResponse('Unauthorized', { status: 401 });
+    }
 
     const body = await request.json();
     const { value, type } = body;
@@ -65,9 +68,6 @@ export async function POST(
 
     return NextResponse.json(destination);
   } catch (error) {
-    if (error instanceof Error && error.message.includes('Unauthorized')) {
-      return new NextResponse('Unauthorized', { status: 401 });
-    }
     if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
       return new NextResponse('This payment destination already exists for this contact', {
         status: 409,
@@ -84,7 +84,10 @@ export async function DELETE(
 ) {
   const { id } = await context.params;
   try {
-    await requireSuperAdmin();
+    const authenticated = await isAuthenticated(request);
+    if (!authenticated) {
+      return new NextResponse('Unauthorized', { status: 401 });
+    }
 
     const url = new URL(request.url);
     const destinationId = url.searchParams.get('destinationId');
@@ -103,10 +106,7 @@ export async function DELETE(
 
     return new NextResponse(null, { status: 204 });
   } catch (error) {
-    if (error instanceof Error && error.message.includes('Unauthorized')) {
-      return new NextResponse('Unauthorized', { status: 401 });
-    }
     console.error('Failed to delete payment destination:', error);
     return new NextResponse('Internal Server Error', { status: 500 });
   }
-} 
+}

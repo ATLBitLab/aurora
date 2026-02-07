@@ -4,31 +4,39 @@ import type { NextRequest } from 'next/server';
 // Add paths that don't require authentication
 const publicPaths = new Set([
   '/', // Home page
-  '/api/auth', // Auth endpoint needs to be public for login
-  '/api/auth/validate', // Auth validation endpoint
+  '/api/auth', // Auth endpoints need to be public for login
   '/_next', // Next.js internals
   '/favicon.ico',
   '/public',
 ]);
 
-// Add protected API paths that should always check auth
-const protectedApiPaths = new Set([
-  '/api/phoenix',
-  '/api/contacts',
-  '/api/node',
-]);
+// Check if a path is public
+function isPublicPath(path: string): boolean {
+  // Exact match
+  if (publicPaths.has(path)) return true;
+  
+  // Path prefix match
+  const firstSegment = path.split('/')[1];
+  if (publicPaths.has(firstSegment) || publicPaths.has('/' + firstSegment)) return true;
+  
+  // Better Auth API routes
+  if (path.startsWith('/api/auth')) return true;
+  
+  return false;
+}
 
 export async function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname;
   
   // Allow public paths
-  if (publicPaths.has(path) || publicPaths.has(path.split('/')[1])) {
+  if (isPublicPath(path)) {
     return NextResponse.next();
   }
 
-  // Check for authentication
-  const authCookie = request.cookies.get('nostr_auth');
-  if (!authCookie) {
+  // Check for Better Auth session token
+  const sessionToken = request.cookies.get('better-auth.session_token');
+  
+  if (!sessionToken) {
     // For API routes, return 401
     if (path.startsWith('/api/')) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -41,20 +49,6 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  // Validate super admin
-  const superAdminNpub = process.env.AURORA_SUPER_ADMIN;
-  if (!superAdminNpub || authCookie.value !== superAdminNpub) {
-    // For API routes, return 403
-    if (path.startsWith('/api/')) {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
-    }
-    
-    // For pages, redirect to home
-    const url = request.nextUrl.clone();
-    url.pathname = '/';
-    return NextResponse.redirect(url);
-  }
-
   return NextResponse.next();
 }
 
@@ -64,4 +58,4 @@ export const config = {
     // Match all paths except static assets
     '/((?!_next/static|_next/image|favicon.ico).*)',
   ],
-}; 
+};

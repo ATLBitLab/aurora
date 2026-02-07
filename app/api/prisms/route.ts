@@ -1,10 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
-import { requireSuperAdmin } from '@/lib/auth';
+import { isAuthenticated } from '@/lib/auth';
 
-export async function GET(_request: NextRequest) {
+export async function GET(request: NextRequest) {
   try {
-    await requireSuperAdmin();
+    const authenticated = await isAuthenticated(request);
+    if (!authenticated) {
+      return new NextResponse('Unauthorized', { status: 401 });
+    }
 
     const prisms = await prisma.prism.findMany({
       orderBy: {
@@ -14,9 +17,6 @@ export async function GET(_request: NextRequest) {
 
     return NextResponse.json(prisms);
   } catch (error) {
-    if (error instanceof Error && error.message.includes('Unauthorized')) {
-      return new NextResponse('Unauthorized', { status: 401 });
-    }
     console.error('Failed to fetch prisms:', error);
     return new NextResponse('Internal Server Error', { status: 500 });
   }
@@ -24,7 +24,10 @@ export async function GET(_request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    await requireSuperAdmin();
+    const authenticated = await isAuthenticated(request);
+    if (!authenticated) {
+      return new NextResponse('Unauthorized', { status: 401 });
+    }
 
     const body = await request.json();
     const { name, slug, description, splits } = body;
@@ -94,10 +97,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(prism);
   } catch (error) {
-    if (error instanceof Error && error.message.includes('Unauthorized')) {
-      return new NextResponse('Unauthorized', { status: 401 });
-    }
     console.error('Failed to create prism:', error);
     return new NextResponse('Internal Server Error', { status: 500 });
   }
-} 
+}

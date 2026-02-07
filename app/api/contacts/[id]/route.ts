@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { PrismaClient } from '@prisma/client';
-import { requireSuperAdmin } from '@/lib/auth';
+import { isAuthenticated } from '@/lib/auth';
 
 const prisma = new PrismaClient();
 
@@ -12,7 +12,10 @@ export async function GET(
   const { id } = await context.params;
 
   try {
-    await requireSuperAdmin();
+    const authenticated = await isAuthenticated(request);
+    if (!authenticated) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
 
     const contact = await prisma.contact.findUnique({
       where: { id }
@@ -28,12 +31,6 @@ export async function GET(
     return NextResponse.json(contact);
   } catch (error) {
     console.error('Error in GET /api/contacts/[id]:', error);
-    if (error instanceof Error && error.message.includes('Unauthorized')) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
     return NextResponse.json(
       { error: 'Failed to fetch contact' },
       { status: 500 }
@@ -48,7 +45,10 @@ export async function PUT(
   const { id } = await context.params;
 
   try {
-    await requireSuperAdmin();
+    const authenticated = await isAuthenticated(request);
+    if (!authenticated) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
 
     const data = await request.json();
     
@@ -67,15 +67,9 @@ export async function PUT(
     return NextResponse.json(contact);
   } catch (error) {
     console.error('Error in PUT /api/contacts/[id]:', error);
-    if (error instanceof Error && error.message.includes('Unauthorized')) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
     return NextResponse.json(
       { error: 'Failed to update contact' },
       { status: 500 }
     );
   }
-} 
+}

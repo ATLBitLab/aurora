@@ -35,6 +35,48 @@ yarn install
 cp .env.example .env
 ```
 
+## Authentication Setup
+
+Aurora uses [Better Auth](https://www.better-auth.com/) for authentication with email/password login.
+
+### Required Configuration
+
+1. **Generate a secret key** for Better Auth:
+```bash
+openssl rand -base64 32
+```
+
+2. **Update your `.env` file** with the following variables:
+```bash
+# Better Auth Configuration (REQUIRED)
+BETTER_AUTH_SECRET=your-generated-secret-key
+
+# Application URL
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+
+# Trusted origins (include your production URL when deploying)
+BETTER_AUTH_TRUSTED_ORIGINS=http://localhost:3000
+```
+
+### Email Whitelist (Optional)
+
+To restrict who can create accounts, set the `ALLOWED_EMAILS` environment variable with a comma-separated list of allowed email addresses:
+
+```bash
+# Only these emails can create accounts
+ALLOWED_EMAILS=admin@example.com,team@example.com,developer@example.com
+```
+
+If this variable is not set or is empty, any email address can register.
+
+### Creating Your First User
+
+1. Start the application
+2. Click "Sign In" on the homepage
+3. Click "Sign up" to create a new account
+4. Enter your email, password (min 8 characters), and name
+5. You'll be automatically signed in after registration
+
 ## Database Setup
 
 Aurora uses PostgreSQL for data storage, running in Docker for easy setup and management.
@@ -122,9 +164,10 @@ npx prisma migrate dev --name <migration_name>
 
 ### Database Structure
 
-The database currently includes:
+The database includes:
 
-- `contacts` table:
+- **User/Session/Account tables**: For Better Auth authentication
+- **contacts table**:
   - UUID-based IDs
   - Optional fields for basic info (firstName, lastName, etc.)
   - Nostr integration (pubkey storage)
@@ -160,9 +203,15 @@ The application will be available at `http://localhost:3000`.
 
 ## Environment Variables
 
-- `PHOENIXD_HOST`: Phoenix node host address
-- `PHOENIXD_HTTP_PASS_LIMITED`: Phoenix node limited access password
-- `DATABASE_URL`: PostgreSQL connection string
+| Variable | Description | Required |
+|----------|-------------|----------|
+| `DATABASE_URL` | PostgreSQL connection string | Yes |
+| `BETTER_AUTH_SECRET` | Secret key for Better Auth (generate with `openssl rand -base64 32`) | Yes |
+| `NEXT_PUBLIC_APP_URL` | Application URL for auth callbacks | Yes |
+| `BETTER_AUTH_TRUSTED_ORIGINS` | Comma-separated list of trusted origins | Yes |
+| `PHOENIXD_HOST` | Phoenix node host address | Yes |
+| `PHOENIXD_HTTP_PASS_LIMITED` | Phoenix node limited access password | Yes |
+| `ALLOWED_EMAILS` | Comma-separated list of allowed email addresses (optional) | No |
 
 ## Deploying to Vercel
 

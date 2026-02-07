@@ -4,3 +4,4 @@ bin
 .env
 *storybook.log
 storybook-static
+tsconfig.tsbuildinfo

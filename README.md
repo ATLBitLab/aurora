@@ -81,7 +81,17 @@ If this variable is not set or is empty, any email address can register.
 
 Aurora uses PostgreSQL for data storage, running in Docker for easy setup and management.
 
-### Starting the Database
+
+If you are only working on the frontned UI, you can use a staging database on Supabase. In your `.env`, add this:
+
+```
+DATABASE_URL="postgresql://postgres.PROJECT_ID:PASSWORD@aws-1-us-east-2.pooler.supabase.com:5432/postgres"
+```
+
+Replace `PROJECT_ID` and `PASSWORD` with the proper credentials.
+
+
+### Starting the Database (Devs Only)
 
 1. Start the PostgreSQL container:
 ```bash
@@ -202,6 +212,13 @@ The application will be available at `http://localhost:3000`.
 | `PHOENIXD_HOST` | Phoenix node host address | Yes |
 | `PHOENIXD_HTTP_PASS_LIMITED` | Phoenix node limited access password | Yes |
 | `ALLOWED_EMAILS` | Comma-separated list of allowed email addresses (optional) | No |
+
+## Deploying to Vercel
+
+The build uses `yarn run vercel-build` (see `vercel.json`), which runs `prisma generate` then `yarn build`. **Do not** use `prisma migrate dev` in the Vercel build—it requires a live DB and fails on preview/production.
+
+- If the Vercel dashboard has a custom **Build Command**, set it to `yarn run vercel-build` or clear it so `vercel.json` is used.
+- Run migrations against your production DB separately (e.g. `prisma migrate deploy` in a one-off job or CI step with `DATABASE_URL` set).
 
 ## Contributing
 

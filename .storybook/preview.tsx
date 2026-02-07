@@ -1,5 +1,6 @@
 import type { Preview } from "@storybook/nextjs-vite";
 import { withThemeByClassName } from "@storybook/addon-themes";
+import React from "react";
 
 // Import global styles for Tailwind and CSS variables
 import "../app/globals.css";

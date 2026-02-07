@@ -1,19 +1,15 @@
 'use client';
 
-import { useNostr } from '../contexts/NostrContext';
+import { useAuth } from '../contexts/AuthContext';
 import { Search, LogOut, ChevronDown, Sparkles } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { iconTokens } from '@/app/lib/iconTokens';
 
 export default function TopNav() {
-  const { publicKey, npub, logout } = useNostr();
+  const { user, logout } = useAuth();
   const router = useRouter();
 
-  // Format npub for display (shortened version)
-  const displayNpub = npub ? `${npub.slice(0, 8)}...${npub.slice(-8)}` : 'Not connected';
-
-  // Get user name from npub or use a default
-  const displayName = publicKey ? displayNpub : 'Guest User';
+  const displayName = user?.name ?? user?.email ?? 'Guest User';
 
   const handleLogout = async () => {
     try {

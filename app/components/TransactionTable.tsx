@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { ChevronUpIcon, ArrowRightIcon } from '@heroicons/react/24/outline';
+import { demoTransactions } from './TransactionTable.data';
 
 const calendarIcon = "https://www.figma.com/api/mcp/asset/c83e973c-82cb-4edc-a5b4-c87f5774c875";
 const starIconFilled = "https://www.figma.com/api/mcp/asset/e4b8e6a1-81fb-4b30-8c31-dad418948756";
@@ -10,7 +11,7 @@ const starIconOutline = "https://www.figma.com/api/mcp/asset/af286206-fd17-4ad9-
 const chevronDownIcon = "https://www.figma.com/api/mcp/asset/e353d42f-828c-4a09-a6cf-c4d48027b1b6";
 const arrowLeftIcon = "https://www.figma.com/api/mcp/asset/79630a33-05bd-489c-a889-a56fbcdbdc81";
 
-interface Transaction {
+export interface Transaction {
   id: string;
   date: string;
   prism: string;
@@ -24,15 +25,21 @@ interface Transaction {
 }
 
 interface TransactionTableProps {
+  /** Array of transactions to display */
   transactions?: Transaction[];
+  /** Available prisms for filtering */
   prisms?: Array<{ id: string; name: string }>;
+  /** Available contacts for filtering */
   contacts?: Array<{ id: string; firstName?: string | null; lastName?: string | null; screenName?: string | null; email?: string | null }>;
+  /** When true, shows demo data if no transactions provided. Use for Storybook/demos. */
+  showDemoData?: boolean;
 }
 
 export default function TransactionTable({ 
   transactions = [],
   prisms = [],
-  contacts = []
+  contacts = [],
+  showDemoData = false
 }: TransactionTableProps) {
   const router = useRouter();
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
@@ -58,82 +65,6 @@ export default function TransactionTable({
   const prismDropdownRef = useRef<HTMLDivElement>(null);
   const paymentModeDropdownRef = useRef<HTMLDivElement>(null);
   const rowsPerPageRef = useRef<HTMLDivElement>(null);
-
-  // Default sample data if none provided
-  const defaultTransactions: Transaction[] = [
-    {
-      id: '1',
-      date: '06/2025',
-      prism: 'bitcoin Pizza',
-      amount: '$1,250.00',
-      status: 'Successful',
-      account: 'Jamie Smith',
-      isFavorite: false,
-    },
-    {
-      id: '2',
-      date: '07/2025',
-      prism: 'Crypto Feast',
-      amount: '$500.00',
-      status: 'Pending',
-      account: 'Alex Johnson',
-      isFavorite: false,
-    },
-    {
-      id: '3',
-      date: '09/2025',
-      prism: 'Tech Summit',
-      amount: '225078764578.00 sats',
-      status: 'Successful',
-      account: 'QHFI8WE8DYHWEBJhbsbdcus...',
-      isFavorite: true,
-    },
-    {
-      id: '4',
-      date: '11/2025',
-      prism: 'Health Expo',
-      amount: '3000.00 Sats',
-      status: 'Active',
-      account: 'Michael Brown',
-      isFavorite: false,
-    },
-    {
-      id: '5',
-      date: '06/2024',
-      prism: 'The true man show movie...',
-      amount: '999999999999999 Sats',
-      status: 'Active',
-      account: 'deekshasatapathy@twelve.cash',
-      isFavorite: false,
-    },
-    {
-      id: '6',
-      date: '04/2025',
-      prism: 'Fashion Week',
-      amount: '56.5643679 Sats',
-      status: 'Successful',
-      account: 'Jessica Lee',
-      isFavorite: false,
-    },
-    {
-      id: '7',
-      date: '08/2025',
-      prism: 'Food Festival',
-      amount: '1 Btc',
-      status: 'Successful',
-      account: 'kcuabcjbau2e482r982hufwueff...',
-      isFavorite: false,
-    },
-    {
-      id: '8',
-      date: '12/2025',
-      prism: 'Finance Forum',
-      amount: '$1,200.00',
-      status: 'Pending',
-      account: 'Rachel Adams',
-      isFavorite: false,
-    },
-  ];
 
   // Close dropdowns when clicking outside
   useEffect(() => {
@@ -206,7 +137,10 @@ export default function TransactionTable({
     });
   };
 
-  const displayTransactions = transactions.length > 0 ? transactions : defaultTransactions;
+  // Use provided transactions, or demo data if showDemoData is true, otherwise empty
+  const displayTransactions = transactions.length > 0 
+    ? transactions 
+    : (showDemoData ? demoTransactions : []);
   const filteredTransactions = filterTransactions(displayTransactions);
   const totalTransactions = filteredTransactions.length;
   const totalPages = Math.ceil(totalTransactions / rowsPerPage);

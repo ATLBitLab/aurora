@@ -12,16 +12,27 @@ const compat = new FlatCompat({
   baseDirectory: __dirname,
 });
 
-const eslintConfig = [...compat.extends("next/core-web-vitals", "next/typescript"), {
-  rules: {
-    "@typescript-eslint/no-unused-vars": [
-      "error",
-      {
-        argsIgnorePattern: "^_",
-        varsIgnorePattern: "^_",
-      },
-    ],
+const eslintConfig = [
+  ...compat.extends("next/core-web-vitals", "next/typescript"),
+  {
+    rules: {
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        {
+          argsIgnorePattern: "^_",
+          varsIgnorePattern: "^_",
+        },
+      ],
+    },
   },
-}, ...storybook.configs["flat/recommended"]];
+  ...storybook.configs["flat/recommended"],
+  {
+    // Disable no-renderer-packages rule - we correctly use @storybook/nextjs-vite
+    // but the rule incorrectly flags transitive @storybook/react dependency
+    rules: {
+      "storybook/no-renderer-packages": "off",
+    },
+  },
+];
 
 export default eslintConfig;

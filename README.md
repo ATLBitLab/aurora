@@ -201,6 +201,98 @@ yarn dev
 
 The application will be available at `http://localhost:3000`.
 
+## Windows Troubleshooting
+
+If you're developing on Windows and experiencing issues with the database connection or environment variables not being picked up, try these solutions:
+
+### 1. Line Ending Issues in `.env`
+
+Windows may create `.env` files with CRLF line endings, which can cause issues with environment variable parsing.
+
+**Fix:** Convert your `.env` file to LF line endings:
+
+```powershell
+# In PowerShell, recreate the .env file with proper line endings
+$content = Get-Content .env.example -Raw
+$content = $content -replace "`r`n", "`n"
+$content | Set-Content .env -NoNewline
+# Then edit .env with your values
+```
+
+Or use VS Code: Open `.env`, click "CRLF" in the bottom-right status bar, and select "LF".
+
+### 2. Prisma Not Picking Up DATABASE_URL
+
+If Prisma can't connect to the database even though your `.env` is correct:
+
+**Option A:** Load environment variables explicitly before running Prisma:
+
+```powershell
+# PowerShell
+$env:DATABASE_URL = "your-database-url-here"
+npx prisma migrate dev
+```
+
+```cmd
+:: Command Prompt
+set DATABASE_URL=your-database-url-here
+npx prisma migrate dev
+```
+
+**Option B:** Use `dotenv-cli` to ensure `.env` is loaded:
+
+```bash
+npx dotenv -e .env -- npx prisma migrate dev
+```
+
+### 3. Docker Networking Issues (WSL2)
+
+If you're using Docker Desktop with WSL2 and can't connect to the PostgreSQL container:
+
+**Fix:** Use `host.docker.internal` instead of `localhost` in your connection string:
+
+```bash
+# In .env, try this instead of localhost
+DATABASE_URL="postgresql://aurora:aurora_dev_password@host.docker.internal:5432/aurora_db"
+```
+
+Or ensure your PostgreSQL container is exposing the port correctly:
+
+```powershell
+# Check if the port is accessible
+Test-NetConnection -ComputerName localhost -Port 5432
+```
+
+### 4. Using the Staging Database (Recommended for Frontend Work)
+
+If you're only working on the frontend UI, use the staging Supabase database to avoid local setup issues entirely:
+
+```bash
+DATABASE_URL="postgresql://postgres.PROJECT_ID:PASSWORD@aws-1-us-east-2.pooler.supabase.com:5432/postgres"
+```
+
+Ask a maintainer for the staging credentials.
+
+### 5. Generating a Secret on Windows
+
+The `openssl` command may not be available on Windows. Alternatives:
+
+```powershell
+# PowerShell - generate a random base64 string
+[Convert]::ToBase64String((1..32 | ForEach-Object { Get-Random -Maximum 256 }) -as [byte[]])
+```
+
+Or use an online generator like [generate-secret.vercel.app](https://generate-secret.vercel.app/32).
+
+### 6. General Tips for Windows Developers
+
+- **Use Git Bash or WSL** for a more consistent experience with bash commands
+- **Run PowerShell as Administrator** if you encounter permission issues
+- **Check your Node.js version**: `node --version` (should be v18+)
+- **Restart your terminal** after modifying `.env` files
+
+If you continue to have issues, reach out in the ATL BitLab Discord!
+
 ## Environment Variables
 
 | Variable | Description | Required |

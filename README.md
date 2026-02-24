@@ -35,11 +35,63 @@ yarn install
 cp .env.example .env
 ```
 
+## Authentication Setup
+
+Aurora uses [Better Auth](https://www.better-auth.com/) for authentication with email/password login.
+
+### Required Configuration
+
+1. **Generate a secret key** for Better Auth:
+```bash
+openssl rand -base64 32
+```
+
+2. **Update your `.env` file** with the following variables:
+```bash
+# Better Auth Configuration (REQUIRED)
+BETTER_AUTH_SECRET=your-generated-secret-key
+
+# Application URL
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+
+# Trusted origins (include your production URL when deploying)
+BETTER_AUTH_TRUSTED_ORIGINS=http://localhost:3000
+```
+
+### Email Whitelist (Optional)
+
+To restrict who can create accounts, set the `ALLOWED_EMAILS` environment variable with a comma-separated list of allowed email addresses:
+
+```bash
+# Only these emails can create accounts
+ALLOWED_EMAILS=admin@example.com,team@example.com,developer@example.com
+```
+
+If this variable is not set or is empty, any email address can register.
+
+### Creating Your First User
+
+1. Start the application
+2. Click "Sign In" on the homepage
+3. Click "Sign up" to create a new account
+4. Enter your email, password (min 8 characters), and name
+5. You'll be automatically signed in after registration
+
 ## Database Setup
 
 Aurora uses PostgreSQL for data storage, running in Docker for easy setup and management.
 
-### Starting the Database
+
+If you are only working on the frontned UI, you can use a staging database on Supabase. In your `.env`, add this:
+
+```
+DATABASE_URL="postgresql://postgres.PROJECT_ID:PASSWORD@aws-1-us-east-2.pooler.supabase.com:5432/postgres"
+```
+
+Replace `PROJECT_ID` and `PASSWORD` with the proper credentials.
+
+
+### Starting the Database (Devs Only)
 
 1. Start the PostgreSQL container:
 ```bash
@@ -112,9 +164,10 @@ npx prisma migrate dev --name <migration_name>
 
 ### Database Structure
 
-The database currently includes:
+The database includes:
 
-- `contacts` table:
+- **User/Session/Account tables**: For Better Auth authentication
+- **contacts table**:
   - UUID-based IDs
   - Optional fields for basic info (firstName, lastName, etc.)
   - Nostr integration (pubkey storage)
@@ -148,11 +201,116 @@ yarn dev
 
 The application will be available at `http://localhost:3000`.
 
+## Windows Troubleshooting
+
+If you're developing on Windows and experiencing issues with the database connection or environment variables not being picked up, try these solutions:
+
+### 1. Line Ending Issues in `.env`
+
+Windows may create `.env` files with CRLF line endings, which can cause issues with environment variable parsing.
+
+**Fix:** Convert your `.env` file to LF line endings:
+
+```powershell
+# In PowerShell, recreate the .env file with proper line endings
+$content = Get-Content .env.example -Raw
+$content = $content -replace "`r`n", "`n"
+$content | Set-Content .env -NoNewline
+# Then edit .env with your values
+```
+
+Or use VS Code: Open `.env`, click "CRLF" in the bottom-right status bar, and select "LF".
+
+### 2. Prisma Not Picking Up DATABASE_URL
+
+If Prisma can't connect to the database even though your `.env` is correct:
+
+**Option A:** Load environment variables explicitly before running Prisma:
+
+```powershell
+# PowerShell
+$env:DATABASE_URL = "your-database-url-here"
+npx prisma migrate dev
+```
+
+```cmd
+:: Command Prompt
+set DATABASE_URL=your-database-url-here
+npx prisma migrate dev
+```
+
+**Option B:** Use `dotenv-cli` to ensure `.env` is loaded:
+
+```bash
+npx dotenv -e .env -- npx prisma migrate dev
+```
+
+### 3. Docker Networking Issues (WSL2)
+
+If you're using Docker Desktop with WSL2 and can't connect to the PostgreSQL container:
+
+**Fix:** Use `host.docker.internal` instead of `localhost` in your connection string:
+
+```bash
+# In .env, try this instead of localhost
+DATABASE_URL="postgresql://aurora:aurora_dev_password@host.docker.internal:5432/aurora_db"
+```
+
+Or ensure your PostgreSQL container is exposing the port correctly:
+
+```powershell
+# Check if the port is accessible
+Test-NetConnection -ComputerName localhost -Port 5432
+```
+
+### 4. Using the Staging Database (Recommended for Frontend Work)
+
+If you're only working on the frontend UI, use the staging Supabase database to avoid local setup issues entirely:
+
+```bash
+DATABASE_URL="postgresql://postgres.PROJECT_ID:PASSWORD@aws-1-us-east-2.pooler.supabase.com:5432/postgres"
+```
+
+Ask a maintainer for the staging credentials.
+
+### 5. Generating a Secret on Windows
+
+The `openssl` command may not be available on Windows. Alternatives:
+
+```powershell
+# PowerShell - generate a random base64 string
+[Convert]::ToBase64String((1..32 | ForEach-Object { Get-Random -Maximum 256 }) -as [byte[]])
+```
+
+Or use an online generator like [generate-secret.vercel.app](https://generate-secret.vercel.app/32).
+
+### 6. General Tips for Windows Developers
+
+- **Use Git Bash or WSL** for a more consistent experience with bash commands
+- **Run PowerShell as Administrator** if you encounter permission issues
+- **Check your Node.js version**: `node --version` (should be v18+)
+- **Restart your terminal** after modifying `.env` files
+
+If you continue to have issues, reach out in the ATL BitLab Discord!
+
 ## Environment Variables
 
-- `PHOENIXD_HOST`: Phoenix node host address
-- `PHOENIXD_HTTP_PASS_LIMITED`: Phoenix node limited access password
-- `DATABASE_URL`: PostgreSQL connection string
+| Variable | Description | Required |
+|----------|-------------|----------|
+| `DATABASE_URL` | PostgreSQL connection string | Yes |
+| `BETTER_AUTH_SECRET` | Secret key for Better Auth (generate with `openssl rand -base64 32`) | Yes |
+| `NEXT_PUBLIC_APP_URL` | Application URL for auth callbacks | Yes |
+| `BETTER_AUTH_TRUSTED_ORIGINS` | Comma-separated list of trusted origins | Yes |
+| `PHOENIXD_HOST` | Phoenix node host address | Yes |
+| `PHOENIXD_HTTP_PASS_LIMITED` | Phoenix node limited access password | Yes |
+| `ALLOWED_EMAILS` | Comma-separated list of allowed email addresses (optional) | No |
+
+## Deploying to Vercel
+
+The build uses `yarn run vercel-build` (see `vercel.json`), which runs `prisma generate` then `yarn build`. **Do not** use `prisma migrate dev` in the Vercel build—it requires a live DB and fails on preview/production.
+
+- If the Vercel dashboard has a custom **Build Command**, set it to `yarn run vercel-build` or clear it so `vercel.json` is used.
+- Run migrations against your production DB separately (e.g. `prisma migrate deploy` in a one-off job or CI step with `DATABASE_URL` set).
 
 ## Contributing
 

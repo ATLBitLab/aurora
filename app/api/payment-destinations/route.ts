@@ -1,10 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
-import { requireSuperAdmin } from '@/lib/auth';
+import { isAuthenticated } from '@/lib/auth';
 
 export async function GET(request: NextRequest) {
   try {
-    await requireSuperAdmin();
+    const authenticated = await isAuthenticated(request);
+    if (!authenticated) {
+      return new NextResponse('Unauthorized', { status: 401 });
+    }
 
     const destinations = await prisma.paymentDestination.findMany({
       include: {
@@ -24,10 +27,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(destinations);
   } catch (error) {
-    if (error instanceof Error && error.message.includes('Unauthorized')) {
-      return new NextResponse('Unauthorized', { status: 401 });
-    }
     console.error('Failed to fetch payment destinations:', error);
     return new NextResponse('Internal Server Error', { status: 500 });
   }
-} 
+}

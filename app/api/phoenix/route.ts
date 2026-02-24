@@ -1,14 +1,13 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { validateSuperAdmin } from '@/lib/auth';
+import { isAuthenticated } from '@/lib/auth';
 
 export async function GET(request: NextRequest) {
   try {
-    // Get the auth cookie and validate super admin
-    const authCookie = request.cookies.get('nostr_auth');
-    const isAuthorized = await validateSuperAdmin(authCookie?.value);
+    // Check if user is authenticated
+    const authenticated = await isAuthenticated(request);
 
-    if (!isAuthorized) {
+    if (!authenticated) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
@@ -45,4 +44,4 @@ export async function GET(request: NextRequest) {
       { status: 500 }
     );
   }
-} 
+}

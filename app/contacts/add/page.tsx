@@ -24,7 +24,7 @@ export default function AddContactPage() {
         body: JSON.stringify({
           ...formData,
           metadata: Object.fromEntries(
-            Object.entries(formData.metadata).filter(([_, v]) => v !== '')
+            Object.entries(formData.metadata).filter((entry) => entry[1] !== '')
           ),
         }),
       });

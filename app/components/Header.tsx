@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Menu, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import NostrLogin from './NostrLogin';
+import AuthLogin from './AuthLogin';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import Button from '@/app/components/Button';
@@ -51,7 +51,7 @@ export default function Header() {
                 {item.label}
               </Link>
             ))}
-            <NostrLogin />
+            <AuthLogin />
           </nav>
 
           {/* Mobile Menu Button */}
@@ -90,10 +90,10 @@ export default function Header() {
             </Link>
           ))}
           <div className="py-2">
-            <NostrLogin />
+            <AuthLogin />
           </div>
         </nav>
       </div>
     </header>
   );
-} 
+}

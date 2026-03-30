@@ -143,7 +143,7 @@ export default function TransactionTable({
     : (showDemoData ? demoTransactions : []);
   const filteredTransactions = filterTransactions(displayTransactions);
   const totalTransactions = filteredTransactions.length;
-  const totalPages = Math.ceil(totalTransactions / rowsPerPage);
+  const totalPages = Math.max(1, Math.ceil(totalTransactions / rowsPerPage));
   const startIndex = (currentPage - 1) * rowsPerPage;
   const endIndex = startIndex + rowsPerPage;
   const paginatedTransactions = filteredTransactions.slice(startIndex, endIndex);

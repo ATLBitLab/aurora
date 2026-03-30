@@ -27,8 +27,10 @@ const eslintConfig = [
   },
   ...storybook.configs["flat/recommended"],
   {
-    // Disable no-renderer-packages rule - we correctly use @storybook/nextjs-vite
-    // but the rule incorrectly flags transitive @storybook/react dependency
+    // Disable no-renderer-packages rule only for Storybook files
+    // We correctly use @storybook/nextjs-vite but the rule incorrectly flags
+    // transitive @storybook/react dependency
+    files: ["**/*.stories.@(js|jsx|ts|tsx|mdx)", ".storybook/**/*"],
     rules: {
       "storybook/no-renderer-packages": "off",
     },

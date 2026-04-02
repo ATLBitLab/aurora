@@ -3,25 +3,13 @@
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { ChevronUpIcon, ArrowRightIcon } from '@heroicons/react/24/outline';
+import type { Transaction } from './fixtures/transactionTableData';
 
 const calendarIcon = "https://www.figma.com/api/mcp/asset/c83e973c-82cb-4edc-a5b4-c87f5774c875";
 const starIconFilled = "https://www.figma.com/api/mcp/asset/e4b8e6a1-81fb-4b30-8c31-dad418948756";
 const starIconOutline = "https://www.figma.com/api/mcp/asset/af286206-fd17-4ad9-9042-9ba3cc6cf3cc";
 const chevronDownIcon = "https://www.figma.com/api/mcp/asset/e353d42f-828c-4a09-a6cf-c4d48027b1b6";
 const arrowLeftIcon = "https://www.figma.com/api/mcp/asset/79630a33-05bd-489c-a889-a56fbcdbdc81";
-
-interface Transaction {
-  id: string;
-  date: string;
-  prism: string;
-  prismId?: string;
-  amount: string;
-  status: 'Successful' | 'Pending' | 'Active';
-  account: string;
-  accountId?: string;
-  paymentMode?: string;
-  isFavorite?: boolean;
-}
 
 interface TransactionTableProps {
   transactions?: Transaction[];
@@ -58,82 +46,6 @@ export default function TransactionTable({
   const prismDropdownRef = useRef<HTMLDivElement>(null);
   const paymentModeDropdownRef = useRef<HTMLDivElement>(null);
   const rowsPerPageRef = useRef<HTMLDivElement>(null);
-
-  // Default sample data if none provided
-  const defaultTransactions: Transaction[] = [
-    {
-      id: '1',
-      date: '06/2025',
-      prism: 'bitcoin Pizza',
-      amount: '$1,250.00',
-      status: 'Successful',
-      account: 'Jamie Smith',
-      isFavorite: false,
-    },
-    {
-      id: '2',
-      date: '07/2025',
-      prism: 'Crypto Feast',
-      amount: '$500.00',
-      status: 'Pending',
-      account: 'Alex Johnson',
-      isFavorite: false,
-    },
-    {
-      id: '3',
-      date: '09/2025',
-      prism: 'Tech Summit',
-      amount: '225078764578.00 sats',
-      status: 'Successful',
-      account: 'QHFI8WE8DYHWEBJhbsbdcus...',
-      isFavorite: true,
-    },
-    {
-      id: '4',
-      date: '11/2025',
-      prism: 'Health Expo',
-      amount: '3000.00 Sats',
-      status: 'Active',
-      account: 'Michael Brown',
-      isFavorite: false,
-    },
-    {
-      id: '5',
-      date: '06/2024',
-      prism: 'The true man show movie...',
-      amount: '999999999999999 Sats',
-      status: 'Active',
-      account: 'deekshasatapathy@twelve.cash',
-      isFavorite: false,
-    },
-    {
-      id: '6',
-      date: '04/2025',
-      prism: 'Fashion Week',
-      amount: '56.5643679 Sats',
-      status: 'Successful',
-      account: 'Jessica Lee',
-      isFavorite: false,
-    },
-    {
-      id: '7',
-      date: '08/2025',
-      prism: 'Food Festival',
-      amount: '1 Btc',
-      status: 'Successful',
-      account: 'kcuabcjbau2e482r982hufwueff...',
-      isFavorite: false,
-    },
-    {
-      id: '8',
-      date: '12/2025',
-      prism: 'Finance Forum',
-      amount: '$1,200.00',
-      status: 'Pending',
-      account: 'Rachel Adams',
-      isFavorite: false,
-    },
-  ];
 
   // Close dropdowns when clicking outside
   useEffect(() => {
@@ -206,8 +118,7 @@ export default function TransactionTable({
     });
   };
 
-  const displayTransactions = transactions.length > 0 ? transactions : defaultTransactions;
-  const filteredTransactions = filterTransactions(displayTransactions);
+  const filteredTransactions = filterTransactions(transactions);
   const totalTransactions = filteredTransactions.length;
   const totalPages = Math.ceil(totalTransactions / rowsPerPage);
   const startIndex = (currentPage - 1) * rowsPerPage;
@@ -229,7 +140,7 @@ export default function TransactionTable({
   };
 
   // Get unique payment modes from transactions
-  const paymentModes: string[] = Array.from(new Set(displayTransactions.map(t => t.paymentMode).filter((m): m is string => Boolean(m))));
+  const paymentModes: string[] = Array.from(new Set(transactions.map(t => t.paymentMode).filter((m): m is string => Boolean(m))));
 
   // Get display name for user
   const getUserDisplayName = (contact: { firstName?: string | null; lastName?: string | null; screenName?: string | null; email?: string | null }) => {

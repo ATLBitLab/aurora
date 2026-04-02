@@ -10,6 +10,25 @@ export async function GET(request: NextRequest) {
     }
 
     const prisms = await prisma.prism.findMany({
+      include: {
+        splits: {
+          include: {
+            paymentDestination: {
+              include: {
+                contact: {
+                  select: {
+                    id: true,
+                    firstName: true,
+                    lastName: true,
+                    screenName: true,
+                    email: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
       orderBy: {
         createdAt: 'desc',
       },

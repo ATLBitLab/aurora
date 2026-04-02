@@ -66,22 +66,8 @@ export default function PrismsPage() {
         throw new Error('Failed to fetch prisms');
       }
       const data = await response.json();
-      // Fetch detailed data for each prism to get member count
-      const prismsWithDetails = await Promise.all(
-        data.map(async (prism: Prism) => {
-          try {
-            const detailResponse = await fetch(`/api/prisms/${prism.id}`);
-            if (detailResponse.ok) {
-              return await detailResponse.json();
-            }
-            return prism;
-          } catch {
-            return prism;
-          }
-        })
-      );
-      setPrisms(prismsWithDetails);
-      setFilteredPrisms(prismsWithDetails);
+      setPrisms(data);
+      setFilteredPrisms(data);
     } catch (err) {
       console.error('Error fetching prisms:', err);
       setError('Failed to load prisms');
@@ -176,13 +162,13 @@ export default function PrismsPage() {
       <div className="w-full px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
         <div className="max-w-[1136px] mx-auto">
           <div className="animate-pulse">
-            <div className="h-8 bg-[#030404] rounded w-1/4 mb-8 sm:mb-10"></div>
-            <div className="h-[38px] bg-[#030404] rounded w-1/4 mb-6 sm:mb-8"></div>
+            <div className="h-8 bg-gray-800 rounded w-1/4 mb-8 sm:mb-10"></div>
+            <div className="h-[38px] bg-gray-800 rounded w-1/4 mb-6 sm:mb-8"></div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-6">
               {[1, 2, 3, 4].map((i) => (
                 <div
                   key={i}
-                  className="w-full max-w-[313px] h-[320px] bg-[#030404] rounded-[12px] mx-auto sm:mx-0"
+                  className="w-full max-w-[313px] h-[320px] bg-gray-800 rounded-[12px] mx-auto sm:mx-0"
                 />
               ))}
             </div>

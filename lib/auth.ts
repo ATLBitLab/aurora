@@ -1,9 +1,7 @@
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
-import { PrismaClient } from "@prisma/client";
+import prisma from "@/lib/prisma";
 import type { NextRequest } from "next/server";
-
-const prisma = new PrismaClient();
 
 // Get whitelisted emails from environment variable
 function getWhitelistedEmails(): string[] {
@@ -21,6 +19,7 @@ export function isEmailWhitelisted(email: string): boolean {
 }
 
 export const auth = betterAuth({
+  baseURL: process.env.BETTER_AUTH_URL || process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
   database: prismaAdapter(prisma, {
     provider: "postgresql",
   }),

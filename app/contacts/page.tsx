@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import Button from '@/app/components/Button';
+import ContactCard from '@/app/components/ContactCard';
 
 interface Contact {
   id: string;

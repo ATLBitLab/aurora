@@ -9,12 +9,15 @@ interface PaymentDestination {
   id: string;
   value: string;
   type: string;
-  contact: {
-    id: string;
-    firstName?: string;
-    lastName?: string;
-    screenName?: string;
-  };
+  contactId: string;
+}
+
+interface Contact {
+  id: string;
+  firstName: string | null;
+  lastName: string | null;
+  screenName: string | null;
+  paymentDestinations: PaymentDestination[];
 }
 
 interface Split {
@@ -54,23 +57,23 @@ export default function PrismForm({
 }: PrismFormProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
-  const [destinations, setDestinations] = useState<PaymentDestination[]>([]);
+  const [contacts, setContacts] = useState<Contact[]>([]);
   const [formData, setFormData] = useState<PrismFormData>(initialData);
 
   useEffect(() => {
-    fetchDestinations();
+    fetchContacts();
   }, []);
 
-  const fetchDestinations = async () => {
+  const fetchContacts = async () => {
     try {
-      const response = await fetch('/api/payment-destinations');
+      const response = await fetch('/api/contacts');
       if (!response.ok) {
-        throw new Error('Failed to fetch payment destinations');
+        throw new Error('Failed to fetch contacts');
       }
       const data = await response.json();
-      setDestinations(data);
+      setContacts(data);
     } catch (err) {
-      console.error('Error fetching payment destinations:', err);
+      console.error('Error fetching contacts:', err);
     } finally {
       setLoading(false);
     }
@@ -133,12 +136,10 @@ export default function PrismForm({
     await onSubmit(formData);
   };
 
-  const getDestinationLabel = (destination: PaymentDestination) => {
-    const contact = destination.contact;
-    const name =
-      contact.screenName ||
-      [contact.firstName, contact.lastName].filter(Boolean).join(' ');
-    return `${name} - ${destination.type} (${destination.value})`;
+  const getContactName = (contact: Contact) => {
+    return contact.screenName ||
+      [contact.firstName, contact.lastName].filter(Boolean).join(' ') ||
+      'Unnamed Contact';
   };
 
   if (loading) {
@@ -252,6 +253,22 @@ export default function PrismForm({
               />
             </div>
 
+            {contacts.length > 0 && !contacts.some((c) => c.paymentDestinations.length > 0) && (
+              <div className="bg-yellow-900/30 border border-yellow-800/50 rounded-lg p-4">
+                <p className="text-yellow-300 text-sm">
+                  Your contacts don&apos;t have payment destinations yet. <a href="/contacts" className="underline hover:text-yellow-200">Edit a contact</a> to add a payment destination first.
+                </p>
+              </div>
+            )}
+
+            {contacts.length === 0 && (
+              <div className="bg-yellow-900/30 border border-yellow-800/50 rounded-lg p-4">
+                <p className="text-yellow-300 text-sm">
+                  No contacts found. <a href="/contacts/add" className="underline hover:text-yellow-200">Create a contact</a> with a payment destination first.
+                </p>
+              </div>
+            )}
+
             <div className="space-y-4">
               {formData.splits.map((split, index) => (
                 <div
@@ -271,11 +288,21 @@ export default function PrismForm({
                         className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-purple-500"
                       >
                         <option value="">Select a destination</option>
-                        {destinations.map((dest) => (
-                          <option key={dest.id} value={dest.id}>
-                            {getDestinationLabel(dest)}
-                          </option>
-                        ))}
+                        {contacts.map((contact) =>
+                          contact.paymentDestinations.length > 0 ? (
+                            <optgroup key={contact.id} label={getContactName(contact)}>
+                              {contact.paymentDestinations.map((dest) => (
+                                <option key={dest.id} value={dest.id}>
+                                  {dest.type} ({dest.value})
+                                </option>
+                              ))}
+                            </optgroup>
+                          ) : (
+                            <option key={contact.id} disabled>
+                              {getContactName(contact)} — no destinations
+                            </option>
+                          )
+                        )}
                       </select>
                     </div>
 
